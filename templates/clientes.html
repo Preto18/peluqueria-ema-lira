@@ -13,10 +13,10 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Telefono</th>
-                        <th>Email</th>
-                        <th>Notas</th>
-                        <th>Registro</th>
+                        <th>Tel&eacute;fono</th>
+                        <th class="d-none d-md-table-cell">Email</th>
+                        <th class="d-none d-md-table-cell">Notas</th>
+                        <th class="d-none d-sm-table-cell">Registro</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -25,9 +25,9 @@
                     <tr>
                         <td class="fw-bold">{{ c.nombre }}</td>
                         <td>{{ c.telefono or '-' }}</td>
-                        <td>{{ c.email or '-' }}</td>
-                        <td>{{ c.notas or '-' }}</td>
-                        <td>{{ c.fecha_registro.strftime('%d/%m/%Y') if c.fecha_registro else '-' }}</td>
+                        <td class="d-none d-md-table-cell">{{ c.email or '-' }}</td>
+                        <td class="d-none d-md-table-cell">{{ c.notas or '-' }}</td>
+                        <td class="d-none d-sm-table-cell">{{ c.fecha_registro.strftime('%d/%m/%Y') if c.fecha_registro else '-' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="/admin/clientes/editar/{{ c.id }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i></a>

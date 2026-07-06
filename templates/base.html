@@ -66,11 +66,12 @@
                 </a>
             </div>
         </div>
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
         <div id="page-content-wrapper">
             <nav class="navbar navbar-expand navbar-light topbar">
                 <div class="container-fluid">
-                    <button class="btn btn-link d-md-none" id="sidebarToggle">
+                    <button class="btn btn-link d-md-none sidebar-toggle-btn" id="sidebarToggle">
                         <i class="bi bi-list fs-4"></i>
                     </button>
                     <span class="navbar-text ms-2 d-none d-md-block">
@@ -110,14 +111,30 @@
     document.addEventListener('DOMContentLoaded', function() {
         var sidebar = document.getElementById('sidebar');
         var toggle = document.getElementById('sidebarToggle');
+        var backdrop = document.getElementById('sidebarBackdrop');
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('show');
+        }
+        function openSidebar() {
+            sidebar.classList.add('active');
+            if (backdrop) backdrop.classList.add('show');
+        }
         if (toggle && sidebar) {
             toggle.addEventListener('click', function(e) {
                 e.preventDefault();
-                sidebar.classList.toggle('active');
+                if (sidebar.classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             });
+            if (backdrop) {
+                backdrop.addEventListener('click', closeSidebar);
+            }
             document.addEventListener('click', function(e) {
                 if (window.innerWidth < 768 && sidebar.classList.contains('active') && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
-                    sidebar.classList.remove('active');
+                    closeSidebar();
                 }
             });
         }

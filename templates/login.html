@@ -187,6 +187,21 @@
         .login-card .alert .btn-close {
             font-size: 0.7rem;
         }
+        @media (max-width: 480px) {
+            .login-deco { display: none; }
+            .login-card { padding: 1.5rem 1rem; }
+            .login-wrap { padding: 1rem; }
+            .login-card .brand { font-size: 1.4rem; }
+            .input-group-login .form-control { padding: 0.6rem 1rem 0.6rem 2.5rem; font-size: 0.85rem; }
+        }
+        @media (max-height: 600px) {
+            .login-deco { display: none; }
+            .login-card { padding: 1.25rem 1rem; }
+            .login-logo { width: 44px; height: 44px; }
+            .login-card .brand { font-size: 1.35rem; }
+            .login-card .brand-sub { margin-bottom: 1rem; }
+            .input-group-login { margin-bottom: 0.6rem; }
+        }
         .login-divider {
             height: 1px;
             background: linear-gradient(to right, transparent, #e0e0e0, transparent);

@@ -35,16 +35,16 @@
         </div>
 
         {% if citas %}
-        <div class="table-responsive" style="overflow:visible" id="citas-table-wrap">
+        <div class="table-responsive" id="citas-table-wrap">
             <table class="citas-table">
                 <thead>
                     <tr>
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Cliente</th>
-                        <th>Tel&eacute;fono</th>
+                        <th class="d-none d-md-table-cell">Tel&eacute;fono</th>
                         <th>Servicio</th>
-                        <th>Precio</th>
+                        <th class="d-none d-sm-table-cell">Precio</th>
                         <th>Estado</th>
                         <th style="width:50px"></th>
                     </tr>
@@ -54,12 +54,12 @@
                     {% set es_hoy = cita.fecha.strftime('%Y-%m-%d') == hoy %}
                     <tr class="{{ 'row-completada' if cita.estado == 'completada' else 'row-pendiente' if cita.estado == 'pendiente' else 'row-aceptada' if cita.estado == 'aceptada' else 'row-cancelada' if cita.estado == 'cancelada' else '' }}{{ ' row-hoy' if es_hoy }}">
                         <td>
-                            {{ cita.fecha.strftime('%d/%m/%Y') }}
+                            {{ cita.fecha.strftime('%d/%m') }}
                             {% if es_hoy %}<span class="badge bg-dark ms-1">Hoy</span>{% endif %}
                         </td>
                         <td class="fw-semibold">{{ cita.hora }}hs</td>
                         <td>{{ cita.cliente.nombre }}</td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             {% if cita.cliente.telefono %}
                             <a href="https://wa.me/54{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
                                 <i class="bi bi-whatsapp me-1"></i>{{ cita.cliente.telefono }}
@@ -67,7 +67,7 @@
                             {% else %}-{% endif %}
                         </td>
                         <td>{{ cita.servicio }}</td>
-                        <td>${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
+                        <td class="d-none d-sm-table-cell">${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
                         <td>
                             {% set badge_class = 'bg-dark' if cita.estado == 'completada' else 'bg-secondary' if cita.estado in ('aceptada', 'pendiente') else 'bg-light text-muted border' %}
                             <span class="badge {{ badge_class }}">{{ cita.estado }}</span>

@@ -1197,11 +1197,52 @@ body {
 .btn-outline-dark { color: #000; border-color: #000; }
 .btn-outline-dark:hover { background: #000; color: #fff; }
 
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.sidebar-backdrop.show {
+    display: block;
+    opacity: 1;
+}
+.sidebar-toggle-btn {
+    padding: 0.5rem;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
-    .sidebar { margin-left: calc(-1 * var(--sidebar-width)); }
+    .sidebar { margin-left: calc(-1 * var(--sidebar-width)); transition: margin-left 0.3s; }
     .sidebar.active { margin-left: 0; }
     #page-content-wrapper { margin-left: 0; }
     .section { padding: 3rem 0; }
+    .table th, .table td { padding: 0.5rem 0.5rem; font-size: 0.8rem; }
+    .card-body { padding: 1rem; }
+    .container-fluid.p-4 { padding: 1rem !important; }
+    .stat-card { padding: 1rem; }
+    .stat-card h3 { font-size: 1.5rem; }
+}
+
+@media (max-width: 576px) {
+    .table th, .table td { padding: 0.4rem 0.35rem; font-size: 0.72rem; white-space: nowrap; }
+    .citas-filter-group { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .citas-filter-group .citas-filter-btn { white-space: nowrap; flex-shrink: 0; }
+    .pagination { font-size: 0.75rem; }
+}
+
+@media (max-width: 400px) {
+    .login-card { padding: 1.5rem 1rem; }
+    .booking-row { flex-direction: column; gap: 0.5rem; }
+    .booking-row .booking-field { min-width: 100%; }
+    .confirm-card { padding: 1.5rem 1rem; }
 }
 
 /* ====== LOGIN REDISEÑADO ====== */

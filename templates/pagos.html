@@ -53,8 +53,8 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
-                                <th>Concepto</th>
-                                <th>Metodo</th>
+                                <th class="d-none d-md-table-cell">Concepto</th>
+                                <th class="d-none d-sm-table-cell">M&eacute;todo</th>
                                 <th>Monto</th>
                                 <th></th>
                             </tr>
@@ -64,8 +64,8 @@
                             <tr>
                                 <td>{{ p.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
                                 <td class="fw-bold">{{ p.cliente.nombre }}</td>
-                                <td>{{ p.concepto or '-' }}</td>
-                                <td><span class="badge bg-info">{{ p.metodo_pago }}</span></td>
+                                <td class="d-none d-md-table-cell">{{ p.concepto or '-' }}</td>
+                                <td class="d-none d-sm-table-cell"><span class="badge bg-info">{{ p.metodo_pago }}</span></td>
                                 <td class="fw-bold text-success">${{ "{:,.0f}".format(p.monto).replace(',', '.') }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">

@@ -12,12 +12,12 @@
                 <thead>
                     <tr>
                         <th>Cliente</th>
-                        <th>Tel&eacute;fono</th>
+                        <th class="d-none d-md-table-cell">Tel&eacute;fono</th>
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Servicio</th>
-                        <th>Precio</th>
-                        <th>Notas</th>
+                        <th class="d-none d-sm-table-cell">Precio</th>
+                        <th class="d-none d-md-table-cell">Notas</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -25,29 +25,29 @@
                     {% for cita in citas %}
                     <tr>
                         <td class="fw-bold">{{ cita.cliente.nombre }}</td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             {% if cita.cliente.telefono %}
                             <a href="https://wa.me/54{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
                                 <i class="bi bi-whatsapp text-success me-1"></i>{{ cita.cliente.telefono }}
                             </a>
                             {% else %}-{% endif %}
                         </td>
-                        <td>{{ cita.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ cita.fecha.strftime('%d/%m') }}</td>
                         <td>{{ cita.hora }}</td>
                         <td>{{ cita.servicio }}</td>
-                        <td>${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
-                        <td>{{ cita.notas or '-' }}</td>
+                        <td class="d-none d-sm-table-cell">${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
+                        <td class="d-none d-md-table-cell">{{ cita.notas or '-' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/aceptada" style="display:inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i> Aceptar</button>
+                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i><span class="d-none d-md-inline"> Aceptar</span></button>
                                 </form>
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/cancelada" style="display:inline" onsubmit="return confirm('&iquest;Rechazar este turno?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i> Rechazar</button>
+                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i><span class="d-none d-md-inline"> Rechazar</span></button>
                                 </form>
                             </div>
                         </td>

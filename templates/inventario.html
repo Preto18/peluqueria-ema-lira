@@ -13,10 +13,10 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Categoria</th>
+                        <th class="d-none d-sm-table-cell">Categor&iacute;a</th>
                         <th>Precio</th>
                         <th>Stock</th>
-                        <th>Descripcion</th>
+                        <th class="d-none d-md-table-cell">Descripci&oacute;n</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -24,14 +24,14 @@
                     {% for p in productos %}
                     <tr>
                         <td class="fw-bold">{{ p.nombre }}</td>
-                        <td>{{ p.categoria or '-' }}</td>
+                        <td class="d-none d-sm-table-cell">{{ p.categoria or '-' }}</td>
                         <td>${{ "{:,.0f}".format(p.precio).replace(',', '.') }}</td>
                         <td>
                             <span class="badge bg-{{ 'success' if p.stock > 10 else 'warning' if p.stock > 0 else 'danger' }} fs-6">
                                 {{ p.stock }}
                             </span>
                         </td>
-                        <td>{{ p.descripcion or '-' }}</td>
+                        <td class="d-none d-md-table-cell">{{ p.descripcion or '-' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="/admin/inventario/editar/{{ p.id }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i></a>
