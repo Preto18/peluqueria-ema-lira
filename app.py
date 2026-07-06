@@ -344,15 +344,10 @@ def api_horarios():
 
 
 @app.route('/agendar/confirmar', methods=['GET', 'POST'])
-def confirmar_turno_get():
+@limiter.limit("10 per minute")
+def confirmar_turno():
     if request.method == 'GET':
         return redirect(url_for('agendar'))
-    return confirmar_turno()
-
-@limiter.limit("10 per minute")
-def confirmar_turno():
-@limiter.limit("10 per minute")
-def confirmar_turno():
     data = request.form
     fecha_str = data.get('fecha')
     hora = data.get('hora')
