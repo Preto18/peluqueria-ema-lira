@@ -8,13 +8,13 @@
     </div>
     <div class="card-body">
         {% if servicios %}
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow: visible;">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
-                        <th>Duracion</th>
+                        <th>Duración</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -27,7 +27,7 @@
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="/admin/servicios/editar/{{ s.id }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i></a>
-                                <form method="POST" action="/admin/servicios/eliminar/{{ s.id }}" style="display:inline" onsubmit="return confirm('&iquest;Eliminar el servicio &quot;{{ s.nombre }}&quot;?')">
+                                <form method="POST" action="/admin/servicios/eliminar/{{ s.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar el servicio "{{ s.nombre }}"?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
                                 </form>
@@ -38,6 +38,27 @@
                 </tbody>
             </table>
         </div>
+        {% if pagination.pages > 1 %}
+        <nav class="mt-3">
+            <ul class="pagination pagination-sm justify-content-center mb-0">
+                <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
+                    <a class="page-link" href="{{ url_for('listar_servicios', page=pagination.prev_num) if pagination.has_prev else '#' }}"><i class="bi bi-chevron-left"></i></a>
+                </li>
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                    <li class="page-item {{ 'active' if p == pagination.page }}">
+                        <a class="page-link" href="{{ url_for('listar_servicios', page=p) }}">{{ p }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {{ 'disabled' if not pagination.has_next }}">
+                    <a class="page-link" href="{{ url_for('listar_servicios', page=pagination.next_num) if pagination.has_next else '#' }}"><i class="bi bi-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
         {% else %}
         <div class="text-center text-muted py-5">
             <i class="bi bi-scissors fs-1 d-block mb-2"></i>

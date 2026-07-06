@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}{{ 'Editar' if servicio.id else 'Nuevo' }} Servicio{% endblock %}
+{% block title %}{{ 'Editar' if servicio else 'Nuevo' }} Servicio{% endblock %}
 {% block content %}
 <div class="card">
-    <div class="card-header"><i class="bi bi-scissors me-2"></i> {{ 'Editar' if servicio.id else 'Nuevo' }} Servicio</div>
+    <div class="card-header"><i class="bi bi-scissors me-2"></i> {{ 'Editar' if servicio else 'Nuevo' }} Servicio</div>
     <div class="card-body">
         <form method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ request.referrer or '' }}">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Nombre *</label>
-                    <input type="text" name="nombre" class="form-control" value="{{ servicio.nombre if servicio and servicio.nombre else '' }}" required>
+                    <input type="text" name="nombre" class="form-control" value="{{ servicio.nombre if servicio else '' }}" required>
                 </div>
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Precio *</label>
-                    <input type="number" step="0.01" name="precio" class="form-control" value="{{ servicio.precio if servicio and servicio.precio else '' }}" required>
+                    <input type="number" step="0.01" name="precio" class="form-control" value="{{ servicio.precio if servicio else '' }}" required>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <label class="form-label">Duracion (min)</label>
-                    <input type="number" name="duracion" class="form-control" value="{{ servicio.duracion if servicio and servicio.duracion else 30 }}">
+                    <label class="form-label">Duración (min)</label>
+                    <input type="number" name="duracion" class="form-control" value="{{ servicio.duracion if servicio else 30 }}">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>

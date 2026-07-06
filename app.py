@@ -180,6 +180,25 @@ def init_db_command():
     print('Base de datos inicializada.')
 
 
+@app.cli.command('seed-services')
+def seed_services_command():
+    """Pobla la tabla Service con los 7 servicios base."""
+    servicios_base = [
+        ('Corte de cabello', 12000, 30),
+        ('Corte y barba', 15000, 40),
+        ('Barba', 5000, 15),
+        ('Tinte', 20000, 60),
+        ('Lavado', 4000, 10),
+        ('Corte infantil', 8000, 20),
+        ('Corte + Barba + Lavado', 22000, 50),
+    ]
+    for nombre, precio, duracion in servicios_base:
+        if not Service.query.filter_by(nombre=nombre).first():
+            db.session.add(Service(nombre=nombre, precio=precio, duracion=duracion))
+    db.session.commit()
+    print('Servicios base creados/verificados.')
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -447,8 +466,9 @@ def confirmar_turno():
 @app.route('/admin/servicios')
 @login_required
 def listar_servicios():
-    servicios = Service.query.order_by(Service.nombre).all()
-    return render_template('servicios.html', servicios=servicios)
+    page = request.args.get('page', 1, type=int)
+    pagination = Service.query.order_by(Service.nombre).paginate(page=page, per_page=20, error_out=False)
+    return render_template('servicios.html', servicios=pagination.items, pagination=pagination)
 
 
 @app.route('/admin/servicios/nuevo', methods=['GET', 'POST'])
@@ -469,7 +489,8 @@ def nuevo_servicio():
         db.session.add(servicio)
         db.session.commit()
         flash('Servicio creado correctamente', 'success')
-        return redirect(url_for('listar_servicios'))
+        next_page = request.form.get('next') or request.referrer or url_for('listar_servicios')
+        return redirect(next_page)
     return render_template('servicio_form.html', servicio=None)
 
 
@@ -487,7 +508,8 @@ def editar_servicio(id):
             return render_template('servicio_form.html', servicio=servicio)
         db.session.commit()
         flash('Servicio actualizado', 'success')
-        return redirect(url_for('listar_servicios'))
+        next_page = request.form.get('next') or request.referrer or url_for('listar_servicios')
+        return redirect(next_page)
     return render_template('servicio_form.html', servicio=servicio)
 
 
