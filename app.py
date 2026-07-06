@@ -45,18 +45,18 @@ if not app.debug:
 @app.errorhandler(404)
 def not_found_error(error):
     app.logger.warning(f'404: {request.url}')
-    return render_template('errors/404.html'), 404
+    return render_template('errors/404.html', info=INFO), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     app.logger.error(f'500: {error}', exc_info=True)
     db.session.rollback()
-    return render_template('errors/500.html'), 500
+    return render_template('errors/500.html', info=INFO), 500
 
 @app.errorhandler(429)
 def ratelimit_error(error):
     app.logger.warning(f'Rate limit exceeded: {request.remote_addr} - {request.url}')
-    return render_template('errors/429.html'), 429
+    return render_template('errors/429.html', info=INFO), 429
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL',
@@ -242,6 +242,10 @@ def logout():
 
 # --- Landing p\u00fablica ---
 
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'}), 200
+
 @app.route('/')
 def landing():
     return render_template('landing.html', servicios=SERVICIOS, promo=PROMO, info=INFO)
@@ -339,7 +343,14 @@ def api_horarios():
 
 
 
-@app.route('/agendar/confirmar', methods=['POST'])
+@app.route('/agendar/confirmar', methods=['GET', 'POST'])
+def confirmar_turno_get():
+    if request.method == 'GET':
+        return redirect(url_for('agendar'))
+    return confirmar_turno()
+
+@limiter.limit("10 per minute")
+def confirmar_turno():
 @limiter.limit("10 per minute")
 def confirmar_turno():
     data = request.form

@@ -10,13 +10,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Fraunces:opsz,wght,SOFT@9..144,700;9..144,800;9..144,900,0;9..144,900,50&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .brand-logo { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .brand-text { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1.2rem; color: #fff; }
+        .navbar-public { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.75rem 0; background: rgba(0,0,0,0.9); }
+    </style>
 </head>
 <body>
 
     <nav class="navbar navbar-public" id="mainNav">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="brand-logo">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="brand-logo" width="36" height="36">
                 <span class="brand-text">Ema Lira</span>
             </a>
             <div class="d-flex align-items-center gap-2">
