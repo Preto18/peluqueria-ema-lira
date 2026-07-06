@@ -14,7 +14,7 @@
                         <th>Cliente</th>
                         <th class="d-none d-md-table-cell">Tel&eacute;fono</th>
                         <th>Fecha</th>
-                        <th>Hora</th>
+                        <th class="d-none d-sm-table-cell">Hora</th>
                         <th>Servicio</th>
                         <th class="d-none d-sm-table-cell">Precio</th>
                         <th class="d-none d-md-table-cell">Notas</th>
@@ -28,13 +28,13 @@
                         <td class="d-none d-md-table-cell">
                             {% if cita.cliente.telefono %}
                             <a href="https://wa.me/54{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
-                                <i class="bi bi-whatsapp text-success me-1"></i>{{ cita.cliente.telefono }}
+                                <i class="bi bi-whatsapp me-1"></i>{{ cita.cliente.telefono }}
                             </a>
                             {% else %}-{% endif %}
                         </td>
-                        <td>{{ cita.fecha.strftime('%d/%m') }}</td>
-                        <td>{{ cita.hora }}</td>
-                        <td>{{ cita.servicio }}</td>
+                        <td>{{ cita.fecha.strftime('%d/%m') }} <span class="d-sm-none text-muted">{{ cita.hora }}</span></td>
+                        <td class="d-none d-sm-table-cell">{{ cita.hora }}</td>
+                        <td class="text-truncate" style="max-width:90px">{{ cita.servicio }}</td>
                         <td class="d-none d-sm-table-cell">${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
                         <td class="d-none d-md-table-cell">{{ cita.notas or '-' }}</td>
                         <td>
@@ -42,12 +42,12 @@
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/aceptada" style="display:inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i><span class="d-none d-md-inline"> Aceptar</span></button>
+                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i></button>
                                 </form>
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/cancelada" style="display:inline" onsubmit="return confirm('&iquest;Rechazar este turno?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i><span class="d-none d-md-inline"> Rechazar</span></button>
+                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i></button>
                                 </form>
                             </div>
                         </td>

@@ -27,7 +27,7 @@
                 </a>
                 <a href="/admin/citas{% if q %}?q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if not estado_filtro }}">Todas</a>
             </div>
-            <form method="GET" action="/admin/citas" class="d-flex gap-1" style="max-width:250px">
+            <form method="GET" action="/admin/citas" class="citas-search-form d-flex gap-1">
                 {% if estado_filtro %}<input type="hidden" name="estado" value="{{ estado_filtro }}">{% endif %}
                 <input type="search" name="q" class="form-control form-control-sm" placeholder="Buscar cliente..." value="{{ q }}">
                 <button class="btn btn-outline-dark btn-sm" type="submit"><i class="bi bi-search"></i></button>
@@ -39,8 +39,8 @@
             <table class="citas-table">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th>Hora</th>
+                        <th class="citas-th-fecha">Fecha</th>
+                        <th class="citas-th-hora d-none d-sm-table-cell">Hora</th>
                         <th>Cliente</th>
                         <th class="d-none d-md-table-cell">Tel&eacute;fono</th>
                         <th>Servicio</th>
@@ -56,8 +56,9 @@
                         <td>
                             {{ cita.fecha.strftime('%d/%m') }}
                             {% if es_hoy %}<span class="badge bg-dark ms-1">Hoy</span>{% endif %}
+                            <span class="d-sm-none text-muted ms-1">{{ cita.hora }}</span>
                         </td>
-                        <td class="fw-semibold">{{ cita.hora }}hs</td>
+                        <td class="fw-semibold d-none d-sm-table-cell">{{ cita.hora }}hs</td>
                         <td>{{ cita.cliente.nombre }}</td>
                         <td class="d-none d-md-table-cell">
                             {% if cita.cliente.telefono %}

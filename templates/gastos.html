@@ -44,20 +44,20 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Descripcion</th>
-                                <th>Categoria</th>
-                                <th>Monto</th>
-                                <th></th>
-                            </tr>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripcion</th>
+                        <th class="d-none d-sm-table-cell">Categoria</th>
+                        <th>Monto</th>
+                        <th></th>
+                    </tr>
                         </thead>
                         <tbody>
                             {% for g in gastos %}
                             <tr>
-                                <td>{{ g.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                                <td class="fw-bold">{{ g.descripcion }}</td>
-                                <td><span class="badge bg-secondary">{{ g.categoria or 'Sin categoria' }}</span></td>
+                                <td>{{ g.fecha.strftime('%d/%m') }} <span class="d-none d-sm-inline">{{ g.fecha.strftime('%Y %H:%M') }}</span></td>
+                                <td class="fw-bold text-truncate" style="max-width:120px">{{ g.descripcion }}</td>
+                                <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ g.categoria or 'Sin categoria' }}</span></td>
                                 <td class="fw-bold text-danger">${{ "{:,.0f}".format(g.monto).replace(',', '.') }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">

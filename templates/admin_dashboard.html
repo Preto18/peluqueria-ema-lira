@@ -1,30 +1,30 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard - Peluqueria Ema Lira{% endblock %}
 {% block content %}
-<div class="row g-4 mb-4">
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card bg-primary-custom">
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-dark">
             <i class="bi bi-people stat-icon"></i>
-            <div class="stat-label">Clientes Registrados</div>
+            <div class="stat-label">Clientes</div>
             <h3>{{ clientes_count }}</h3>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card bg-success-custom">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card" style="background:#222;">
             <i class="bi bi-cash-coin stat-icon"></i>
             <div class="stat-label">Ingresos Semana</div>
             <h3>${{ "{:,.0f}".format(ingresos_semana).replace(',', '.') }}</h3>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card bg-danger-custom">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card" style="background:#444;">
             <i class="bi bi-cash-stack stat-icon"></i>
             <div class="stat-label">Gastos Semana</div>
             <h3>${{ "{:,.0f}".format(gastos_semana).replace(',', '.') }}</h3>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card bg-warning-custom">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card" style="background:#666;">
             <i class="bi bi-box-seam stat-icon"></i>
             <div class="stat-label">Productos</div>
             <h3>{{ productos_count }}</h3>
@@ -32,37 +32,37 @@
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-xl-8">
+<div class="row g-3 mb-3">
+    <div class="col-12 col-xl-7">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-graph-up me-2"></i> Ingresos vs Gastos (ultimos 7 dias)</span>
+                <span><i class="bi bi-graph-up me-2"></i> Ingresos vs Gastos</span>
             </div>
-            <div class="card-body">
-                <canvas id="chartFinanzas" height="250"></canvas>
+            <div class="card-body chart-wrapper">
+                <canvas id="chartFinanzas"></canvas>
             </div>
         </div>
     </div>
-    <div class="col-xl-4">
+    <div class="col-12 col-xl-5">
         <div class="card">
             <div class="card-header"><i class="bi bi-pie-chart me-2"></i> Servicios mas pedidos</div>
-            <div class="card-body">
-                <canvas id="chartServicios" height="250"></canvas>
+            <div class="card-body chart-wrapper">
+                <canvas id="chartServicios"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-xl-5">
+<div class="row g-3 mb-3">
+    <div class="col-12 col-xl-5">
         <div class="card">
             <div class="card-header"><i class="bi bi-calendar-week me-2"></i> Citas de la semana</div>
-            <div class="card-body">
-                <canvas id="chartSemana" height="200"></canvas>
+            <div class="card-body chart-wrapper">
+                <canvas id="chartSemana"></canvas>
             </div>
         </div>
     </div>
-    <div class="col-xl-7">
+    <div class="col-12 col-xl-7">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-calendar-day me-2"></i> Citas de Hoy</span>
@@ -77,7 +77,7 @@
                                 <th>Hora</th>
                                 <th>Cliente</th>
                                 <th>Servicio</th>
-                                <th>Precio</th>
+                                <th class="d-none d-sm-table-cell">Precio</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -85,13 +85,12 @@
                             {% for cita in citas_hoy %}
                             <tr>
                                 <td class="fw-bold">{{ cita.hora }}</td>
-                                <td>{{ cita.cliente.nombre }}</td>
-                                <td>{{ cita.servicio }}</td>
-                                <td>${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
+                                <td class="text-truncate" style="max-width:100px">{{ cita.cliente.nombre }}</td>
+                                <td class="text-truncate" style="max-width:90px">{{ cita.servicio }}</td>
+                                <td class="d-none d-sm-table-cell">${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
                                 <td>
-                                    <span class="badge bg-{{ 'dark' if cita.estado == 'completada' else 'info' if cita.estado == 'aceptada' else 'warning' if cita.estado == 'pendiente' else 'secondary' }}">
-                                        {{ 'Completada' if cita.estado == 'completada' else 'Aceptada' if cita.estado == 'aceptada' else 'Pendiente' if cita.estado == 'pendiente' else cita.estado }}
-                                    </span>
+                                    <span class="badge bg-{{ 'dark' if cita.estado == 'completada' else 'secondary' if cita.estado == 'aceptada' else 'secondary' if cita.estado == 'pendiente' else 'light text-muted border' }}">
+                                        {{ cita.estado[:4] if cita.estado != 'completada' else 'OK' }}</span>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -101,7 +100,7 @@
                 {% else %}
                 <div class="p-4 text-center text-muted">
                     <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
-                    No hay citas programadas para hoy.
+                    No hay citas para hoy.
                 </div>
                 {% endif %}
             </div>
