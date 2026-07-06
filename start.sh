@@ -1,4 +1,5 @@
 #!/bin/bash
-flask db upgrade
-flask init-db
-gunicorn app:app
+set -e
+python -m flask db upgrade
+python -m flask init-db
+exec gunicorn --bind 0.0.0.0:$PORT app:app
