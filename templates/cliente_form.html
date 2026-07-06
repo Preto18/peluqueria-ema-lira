@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if cliente else 'Nuevo' }} Cliente{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-person me-2 text-danger"></i> {{ 'Editar' if cliente else 'Nuevo' }} Cliente</div>
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ request.referrer or '' }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre *</label>
+                    <input type="text" name="nombre" class="form-control" value="{{ cliente.nombre if cliente else '' }}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Telefono</label>
+                    <input type="text" name="telefono" class="form-control" value="{{ cliente.telefono if cliente else '' }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ cliente.email if cliente else '' }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Notas</label>
+                <textarea name="notas" class="form-control" rows="3">{{ cliente.notas if cliente else '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="/admin/clientes" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

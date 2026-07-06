@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Peluqueria Ema Lira{% endblock %}
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-primary-custom">
+            <i class="bi bi-people stat-icon"></i>
+            <div class="stat-label">Clientes Registrados</div>
+            <h3>{{ clientes_count }}</h3>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-success-custom">
+            <i class="bi bi-cash-coin stat-icon"></i>
+            <div class="stat-label">Ingresos Semana</div>
+            <h3>${{ "{:,.0f}".format(ingresos_semana).replace(',', '.') }}</h3>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-danger-custom">
+            <i class="bi bi-cash-stack stat-icon"></i>
+            <div class="stat-label">Gastos Semana</div>
+            <h3>${{ "{:,.0f}".format(gastos_semana).replace(',', '.') }}</h3>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-warning-custom">
+            <i class="bi bi-box-seam stat-icon"></i>
+            <div class="stat-label">Productos</div>
+            <h3>{{ productos_count }}</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-graph-up me-2"></i> Ingresos vs Gastos (ultimos 7 dias)</span>
+            </div>
+            <div class="card-body">
+                <canvas id="chartFinanzas" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-pie-chart me-2"></i> Servicios mas pedidos</div>
+            <div class="card-body">
+                <canvas id="chartServicios" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-5">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-calendar-week me-2"></i> Citas de la semana</div>
+            <div class="card-body">
+                <canvas id="chartSemana" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar-day me-2"></i> Citas de Hoy</span>
+                <a href="/admin/citas/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nueva</a>
+            </div>
+            <div class="card-body p-0">
+                {% if citas_hoy %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Cliente</th>
+                                <th>Servicio</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cita in citas_hoy %}
+                            <tr>
+                                <td class="fw-bold">{{ cita.hora }}</td>
+                                <td>{{ cita.cliente.nombre }}</td>
+                                <td>{{ cita.servicio }}</td>
+                                <td>${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'dark' if cita.estado == 'completada' else 'info' if cita.estado == 'aceptada' else 'warning' if cita.estado == 'pendiente' else 'secondary' }}">
+                                        {{ 'Completada' if cita.estado == 'completada' else 'Aceptada' if cita.estado == 'aceptada' else 'Pendiente' if cita.estado == 'pendiente' else cita.estado }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                    No hay citas programadas para hoy.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning me-2"></i> Acciones Rapidas</div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-2">
+                        <a href="/admin/turnos-pendientes" class="btn btn-dark w-100 py-3">
+                            <i class="bi bi-hourglass-split fs-4 d-block mb-1"></i>
+                            <small>Turnos Pendientes</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/admin/clientes/nuevo" class="btn btn-outline-dark w-100 py-3">
+                            <i class="bi bi-person-plus fs-4 d-block mb-1"></i>
+                            <small>Nuevo Cliente</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/admin/citas/nuevo" class="btn btn-outline-dark w-100 py-3">
+                            <i class="bi bi-calendar-plus fs-4 d-block mb-1"></i>
+                            <small>Nueva Cita</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/admin/pagos" class="btn btn-outline-dark w-100 py-3">
+                            <i class="bi bi-cash-coin fs-4 d-block mb-1"></i>
+                            <small>Registrar Pago</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/admin/citas?estado=hoy" class="btn btn-outline-dark w-100 py-3">
+                            <i class="bi bi-calendar-day fs-4 d-block mb-1"></i>
+                            <small>Citas de Hoy</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/agendar" target="_blank" class="btn btn-outline-dark w-100 py-3">
+                            <i class="bi bi-globe fs-4 d-block mb-1"></i>
+                            <small>Ver P&aacute;gina</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/dashboard')
+        .then(r => r.json())
+        .then(data => {
+            if (data.labels && data.labels.length > 0) {
+                new Chart(document.getElementById('chartFinanzas'), {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Ingresos',
+                            data: data.ingresos,
+                            borderColor: '#000',
+                            backgroundColor: 'rgba(0,0,0,0.05)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#000'
+                        }, {
+                            label: 'Gastos',
+                            data: data.gastos,
+                            borderColor: '#999',
+                            backgroundColor: 'rgba(0,0,0,0.02)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#999'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+            if (data.servicios_labels && data.servicios_labels.length > 0) {
+                const colors = ['#000', '#333', '#555', '#777', '#999', '#bbb', '#ddd'];
+                new Chart(document.getElementById('chartServicios'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.servicios_labels,
+                        datasets: [{
+                            data: data.servicios_data,
+                            backgroundColor: colors.slice(0, data.servicios_labels.length),
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } },
+                        cutout: '65%'
+                    }
+                });
+            } else {
+                document.getElementById('chartServicios').parentElement.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart fs-1 d-block mb-2"></i>Sin datos aun</div>';
+            }
+        });
+    fetch('/api/citas-semana')
+        .then(r => r.json())
+        .then(data => {
+            if (data.labels) {
+                new Chart(document.getElementById('chartSemana'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Citas',
+                            data: data.data,
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            borderColor: '#000',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        });
+});
+</script>
+{% endblock %}

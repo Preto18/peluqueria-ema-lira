@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Turnos Pendientes - Peluqueria Ema Lira{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-hourglass-split me-2 text-danger"></i> Turnos Pendientes de Aprobaci&oacute;n</span>
+    </div>
+    <div class="card-body">
+        {% if citas %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Tel&eacute;fono</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Servicio</th>
+                        <th>Precio</th>
+                        <th>Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td class="fw-bold">{{ cita.cliente.nombre }}</td>
+                        <td>
+                            {% if cita.cliente.telefono %}
+                            <a href="https://wa.me/54{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
+                                <i class="bi bi-whatsapp text-success me-1"></i>{{ cita.cliente.telefono }}
+                            </a>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td>{{ cita.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ cita.hora }}</td>
+                        <td>{{ cita.servicio }}</td>
+                        <td>${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
+                        <td>{{ cita.notas or '-' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/aceptada" style="display:inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="next" value="{{ request.url }}">
+                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i> Aceptar</button>
+                                </form>
+                                <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/cancelada" style="display:inline" onsubmit="return confirm('&iquest;Rechazar este turno?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="next" value="{{ request.url }}">
+                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i> Rechazar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+            <p>No hay turnos pendientes de aprobaci&oacute;n.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

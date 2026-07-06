@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: peluqueria-ema-lira
+    runtime: python
+    repo: https://github.com/tu-usuario/peluqueria-ema-lira
+    plan: free
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: peluqueria-db
+          property: connectionString
+      - key: FLASK_APP
+        value: app.py
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+
+databases:
+  - name: peluqueria-db
+    plan: free
+    region: ohio
+    databaseName: peluqueria
+    user: peluqueria

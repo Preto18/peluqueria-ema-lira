@@ -1,0 +1,202 @@
+{% extends 'public/base_public.html' %}
+{% block content %}
+<div class="booking-card">
+    <div class="booking-card-header">
+        <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="booking-logo">
+        <div class="booking-icon-title">Ema Lira</div>
+        <div class="booking-icon-sub">Agend&aacute; tu turno</div>
+    </div>
+
+    <form id="form-turno" method="POST" action="/agendar/confirmar">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="servicio" id="servicio-input" value="">
+        <input type="hidden" name="hora" id="hora-input">
+
+        <div class="booking-field">
+            <div class="booking-field-label"><i class="bi bi-scissors me-1"></i> Servicio</div>
+            <select name="servicio_select" id="servicio-select" class="booking-select">
+                {% for s in servicios %}
+                <option value="{{ s.nombre }}" data-precio="{{ s.precio }}" data-duracion="{{ s.duracion }}">{{ s.nombre }} &mdash; ${{ "{:,.0f}".format(s.precio).replace(',', '.') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="booking-row">
+            <div class="booking-field flex-grow-1">
+                <div class="booking-field-label"><i class="bi bi-calendar3 me-1"></i> Fecha</div>
+                <input type="date" name="fecha" id="fecha-input" class="booking-date-input" required>
+            </div>
+            <div class="booking-field" style="min-width:110px">
+                <div class="booking-field-label"><i class="bi bi-people me-1"></i> Personas</div>
+                <select name="cantidad_personas" id="cantidad" class="booking-select">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="booking-field">
+            <div class="booking-field-label"><i class="bi bi-clock me-1"></i> Horario</div>
+            <select id="horario-select" class="booking-select" disabled>
+                <option value="">Seleccion&aacute; una fecha primero</option>
+            </select>
+        </div>
+
+        <div id="promo-info" class="booking-promo"></div>
+
+        <div class="booking-field">
+            <div class="booking-field-label"><i class="bi bi-person me-1"></i> Tus datos</div>
+            <div class="booking-row">
+                <input type="text" name="nombre" class="booking-input flex-grow-1" placeholder="Nombre" required>
+                <input type="tel" name="telefono" class="booking-input" style="min-width:140px" placeholder="11 1234-5678" required>
+            </div>
+        </div>
+
+        <div class="booking-summary">
+            <div class="booking-summary-row"><span>Servicio</span><span id="resumen-servicio" class="fw-semibold">&mdash;</span></div>
+            <div class="booking-summary-row"><span>Fecha</span><span id="resumen-fecha" class="fw-semibold">&mdash;</span></div>
+            <div class="booking-summary-row"><span>Hora</span><span id="resumen-hora" class="fw-semibold">&mdash;</span></div>
+            <div class="booking-summary-row"><span>Personas</span><span id="resumen-personas" class="fw-semibold">1</span></div>
+            <div class="booking-summary-row total"><span>Total</span><span id="resumen-total" class="fw-bold">$12.000</span></div>
+        </div>
+
+        <button type="submit" class="booking-submit" id="btn-submit" disabled>
+            <span id="btn-text">Confirmar Turno</span>
+            <i class="bi bi-arrow-right" id="btn-icon"></i>
+            <span class="spinner-border spinner-border-sm d-none" id="btn-spinner" role="status"></span>
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const PROMO_DIAS = [2, 3];
+const DIAS_CERRADO = [0, 1];
+const NOMBRES_DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MAX_MESES = 2;
+
+function getSelectedService() {
+    const select = document.getElementById('servicio-select');
+    const opt = select.options[select.selectedIndex];
+    return {
+        nombre: opt.value,
+        precio: parseInt(opt.dataset.precio),
+        duracion: parseInt(opt.dataset.duracion)
+    };
+}
+
+function actualizarPrecio() {
+    const fecha = document.getElementById('fecha-input').value;
+    const cant = parseInt(document.getElementById('cantidad').value);
+    if (!fecha) return;
+    const dia = new Date(fecha + 'T12:00:00').getDay();
+    const servicio = getSelectedService();
+    const esPromo = PROMO_DIAS.includes(dia) && cant > 1;
+    const precio = esPromo ? 10000 : servicio.precio;
+    const total = precio * cant;
+    document.getElementById('servicio-input').value = servicio.nombre;
+    document.getElementById('resumen-servicio').textContent = servicio.nombre;
+    document.getElementById('resumen-personas').textContent = cant;
+    document.getElementById('resumen-total').textContent = '$' + total.toLocaleString('es-AR');
+    const promoInfo = document.getElementById('promo-info');
+    promoInfo.classList.remove('show');
+    if (esPromo) {
+        promoInfo.classList.add('show');
+        promoInfo.innerHTML = '<i class="bi bi-lightning-fill me-1"></i> <strong>Promo +1 activada!</strong> $' + precio.toLocaleString('es-AR') + ' c/u';
+    } else if (PROMO_DIAS.includes(dia) && cant === 1) {
+        promoInfo.classList.add('show');
+        promoInfo.innerHTML = '<i class="bi bi-info-circle me-1"></i> <strong>Promo +1:</strong> Vení con amigos y paguen $' + (10000).toLocaleString('es-AR') + ' c/u';
+    }
+}
+
+function proximoDiaHabil(desde) {
+    const fecha = new Date(desde);
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(fecha);
+        d.setDate(d.getDate() + i);
+        if (!DIAS_CERRADO.includes(d.getDay())) {
+            return d;
+        }
+    }
+    return fecha;
+}
+
+document.getElementById('servicio-select').addEventListener('change', actualizarPrecio);
+document.getElementById('cantidad').addEventListener('change', actualizarPrecio);
+
+document.getElementById('horario-select').addEventListener('change', function() {
+    const h = this.value;
+    document.getElementById('hora-input').value = h;
+    document.getElementById('resumen-hora').textContent = h || '—';
+    document.getElementById('btn-submit').disabled = !h;
+});
+
+document.getElementById('fecha-input').addEventListener('change', function() {
+    const fecha = this.value;
+    const partes = fecha.split('-');
+    document.getElementById('resumen-fecha').textContent = partes[2] + '/' + partes[1] + '/' + partes[0];
+    document.getElementById('hora-input').value = '';
+    document.getElementById('horario-select').value = '';
+    document.getElementById('btn-submit').disabled = true;
+    document.getElementById('resumen-hora').textContent = '—';
+    actualizarPrecio();
+
+    const horarioSelect = document.getElementById('horario-select');
+    const dia = new Date(fecha + 'T12:00:00').getDay();
+    if (DIAS_CERRADO.includes(dia)) {
+        horarioSelect.innerHTML = '<option value="">Cerrado los ' + NOMBRES_DIAS[dia] + '</option>';
+        horarioSelect.disabled = true;
+        return;
+    }
+
+    horarioSelect.innerHTML = '<option value="">Cargando horarios…</option>';
+    horarioSelect.disabled = true;
+    fetch('/api/horarios?fecha=' + fecha)
+        .then(r => r.json())
+        .then(data => {
+            horarioSelect.innerHTML = '<option value="">Seleccion&aacute; un horario</option>';
+            if (data.horarios.length === 0) {
+                horarioSelect.innerHTML = '<option value="">Sin horarios disponibles</option>';
+                horarioSelect.disabled = true;
+                return;
+            }
+            data.horarios.forEach(h => {
+                const opt = document.createElement('option');
+                opt.value = h;
+                opt.textContent = h + ' hs';
+                horarioSelect.appendChild(opt);
+            });
+            horarioSelect.disabled = false;
+        });
+});
+
+document.getElementById('form-turno').addEventListener('submit', function() {
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    document.getElementById('btn-text').textContent = 'Confirmando…';
+    document.getElementById('btn-icon').classList.add('d-none');
+    document.getElementById('btn-spinner').classList.remove('d-none');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInput = document.getElementById('fecha-input');
+    const hoy = new Date();
+    const maniana = new Date(hoy);
+    maniana.setDate(maniana.getDate() + 1);
+
+    const maxDate = new Date(hoy);
+    maxDate.setMonth(maxDate.getMonth() + MAX_MESES);
+    fechaInput.max = maxDate.toISOString().split('T')[0];
+
+    const defaultDate = proximoDiaHabil(maniana);
+    fechaInput.min = hoy.toISOString().split('T')[0];
+    fechaInput.value = defaultDate.toISOString().split('T')[0];
+    fechaInput.dispatchEvent(new Event('change'));
+    actualizarPrecio();
+});
+</script>
+{% endblock %}

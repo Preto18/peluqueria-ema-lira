@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if cita else 'Nueva' }} Cita{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-calendar-plus me-2"></i> {{ 'Editar' if cita else 'Nueva' }} Cita</div>
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ request.referrer or '' }}">
+            <div class="row">
+                <div class="col-md-6 mb-3" id="cliente-field">
+                    <label class="form-label">Cliente *</label>
+                    <select name="cliente_id" id="cliente-select" class="form-select" {{ 'required' if not cita else '' }}>
+                        <option value="">Seleccionar cliente...</option>
+                        {% for c in clientes %}
+                        <option value="{{ c.id }}" {{ 'selected' if cita and cita.cliente_id == c.id else '' }}>{{ c.nombre }}{{ ' - ' + c.telefono if c.telefono else '' }}</option>
+                        {% endfor %}
+                        <option value="__new__">+ Nuevo Cliente</option>
+                    </select>
+                    <div id="nuevo-cliente-fields" class="mt-2 d-none">
+                        <input type="text" name="nuevo_nombre" class="form-control mb-2" placeholder="Nombre del nuevo cliente">
+                        <input type="tel" name="nuevo_telefono" class="form-control" placeholder="Tel&eacute;fono">
+                    </div>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Fecha *</label>
+                    <input type="date" name="fecha" class="form-control" value="{{ cita.fecha.strftime('%Y-%m-%d') if cita else '' }}" required>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Hora *</label>
+                    <input type="time" name="hora" class="form-control" value="{{ cita.hora if cita else '' }}" required>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Precio</label>
+                    <input type="number" step="0.01" name="precio" class="form-control" value="{{ cita.precio if cita else '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Servicio *</label>
+                    <select name="servicio" id="servicio-select" class="form-select" required>
+                        <option value="">Seleccionar...</option>
+                        {% for s in servicios %}
+                        <option value="{{ s.nombre }}" data-precio="{{ s.precio }}" {{ 'selected' if cita and cita.servicio == s.nombre else '' }}>{{ s.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if cita %}
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="pendiente" {{ 'selected' if cita.estado == 'pendiente' else '' }}>Pendiente</option>
+                        <option value="aceptada" {{ 'selected' if cita.estado == 'aceptada' else '' }}>Aceptada</option>
+                        <option value="completada" {{ 'selected' if cita.estado == 'completada' else '' }}>Completada</option>
+                        <option value="cancelada" {{ 'selected' if cita.estado == 'cancelada' else '' }}>Cancelada</option>
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Notas</label>
+                <textarea name="notas" class="form-control" rows="2">{{ cita.notas if cita else '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="/admin/citas" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('servicio-select').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    const precioInput = document.querySelector('input[name="precio"]');
+    if (opt && opt.dataset.precio) {
+        precioInput.value = opt.dataset.precio;
+    }
+});
+
+const clienteSelect = document.getElementById('cliente-select');
+const nuevoClienteFields = document.getElementById('nuevo-cliente-fields');
+if (clienteSelect) {
+    clienteSelect.addEventListener('change', function() {
+        if (this.value === '__new__') {
+            nuevoClienteFields.classList.remove('d-none');
+            this.removeAttribute('required');
+        } else {
+            nuevoClienteFields.classList.add('d-none');
+            this.setAttribute('required', '');
+        }
+    });
+}
+</script>
+{% endblock %}

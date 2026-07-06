@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Citas - Peluqueria Ema Lira{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span><i class="bi bi-calendar-check me-2"></i> Citas</span>
+        <a href="/admin/citas/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nueva Cita</a>
+    </div>
+
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div class="citas-filter-group">
+                <a href="/admin/citas?estado=hoy{% if q %}&q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if estado_filtro == 'hoy' }}">
+                    Hoy <span class="badge bg-white text-dark ms-1">{{ counts.hoy }}</span>
+                </a>
+                <a href="/admin/citas?estado=pendiente{% if q %}&q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if estado_filtro == 'pendiente' }}">
+                    Pendientes <span class="badge bg-white text-dark ms-1">{{ counts.pendiente }}</span>
+                </a>
+                <a href="/admin/citas?estado=aceptada{% if q %}&q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if estado_filtro == 'aceptada' }}">
+                    Aceptadas <span class="badge bg-white text-dark ms-1">{{ counts.aceptada }}</span>
+                </a>
+                <a href="/admin/citas?estado=completada{% if q %}&q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if estado_filtro == 'completada' }}">
+                    Completadas <span class="badge bg-white text-dark ms-1">{{ counts.completada }}</span>
+                </a>
+                <a href="/admin/citas?estado=cancelada{% if q %}&q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if estado_filtro == 'cancelada' }}">
+                    Canceladas <span class="badge bg-white text-dark ms-1">{{ counts.cancelada }}</span>
+                </a>
+                <a href="/admin/citas{% if q %}?q={{ q }}{% endif %}" class="citas-filter-btn {{ 'active' if not estado_filtro }}">Todas</a>
+            </div>
+            <form method="GET" action="/admin/citas" class="d-flex gap-1" style="max-width:250px">
+                {% if estado_filtro %}<input type="hidden" name="estado" value="{{ estado_filtro }}">{% endif %}
+                <input type="search" name="q" class="form-control form-control-sm" placeholder="Buscar cliente..." value="{{ q }}">
+                <button class="btn btn-outline-dark btn-sm" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+
+        {% if citas %}
+        <div class="table-responsive" style="overflow:visible" id="citas-table-wrap">
+            <table class="citas-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Tel&eacute;fono</th>
+                        <th>Servicio</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th style="width:50px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    {% set es_hoy = cita.fecha.strftime('%Y-%m-%d') == hoy %}
+                    <tr class="{{ 'row-completada' if cita.estado == 'completada' else 'row-pendiente' if cita.estado == 'pendiente' else 'row-aceptada' if cita.estado == 'aceptada' else 'row-cancelada' if cita.estado == 'cancelada' else '' }}{{ ' row-hoy' if es_hoy }}">
+                        <td>
+                            {{ cita.fecha.strftime('%d/%m/%Y') }}
+                            {% if es_hoy %}<span class="badge bg-dark ms-1">Hoy</span>{% endif %}
+                        </td>
+                        <td class="fw-semibold">{{ cita.hora }}hs</td>
+                        <td>{{ cita.cliente.nombre }}</td>
+                        <td>
+                            {% if cita.cliente.telefono %}
+                            <a href="https://wa.me/54{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
+                                <i class="bi bi-whatsapp me-1"></i>{{ cita.cliente.telefono }}
+                            </a>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td>{{ cita.servicio }}</td>
+                        <td>${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
+                        <td>
+                            {% set badge_class = 'bg-dark' if cita.estado == 'completada' else 'bg-secondary' if cita.estado in ('aceptada', 'pendiente') else 'bg-light text-muted border' %}
+                            <span class="badge {{ badge_class }}">{{ cita.estado }}</span>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="citas-actions-btn dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="viewport" title="Acciones">&hellip;</button>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-citas shadow-sm border-0">
+                                    <li><a class="dropdown-item" href="/admin/citas/editar/{{ cita.id }}"><i class="bi bi-pencil"></i> Editar</a></li>
+                                    {% if cita.estado != 'completada' %}
+                                    <li><a class="dropdown-item" href="#" onclick="cambiarEstado({{ cita.id }}, 'completada')"><i class="bi bi-check-lg"></i> Completada</a></li>
+                                    {% endif %}
+                                    {% if cita.estado != 'cancelada' %}
+                                    <li><a class="dropdown-item" href="#" onclick="confirmarCancelar({{ cita.id }}, '{{ cita.cliente.nombre|e }}', '{{ cita.fecha.strftime('%d/%m') }}', '{{ cita.hora }}')"><i class="bi bi-x-lg"></i> Cancelar</a></li>
+                                    {% endif %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="eliminarCita({{ cita.id }})"><i class="bi bi-trash"></i> Eliminar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if pagination.pages > 1 %}
+        <nav class="mt-3">
+            <ul class="pagination pagination-sm justify-content-center mb-0">
+                <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
+                    <a class="page-link" href="{{ url_for('listar_citas', page=pagination.prev_num, estado=estado_filtro, q=q) if pagination.has_prev else '#' }}"><i class="bi bi-chevron-left"></i></a>
+                </li>
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                    <li class="page-item {{ 'active' if p == pagination.page }}">
+                        <a class="page-link" href="{{ url_for('listar_citas', page=p, estado=estado_filtro, q=q) }}">{{ p }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {{ 'disabled' if not pagination.has_next }}">
+                    <a class="page-link" href="{{ url_for('listar_citas', page=pagination.next_num, estado=estado_filtro, q=q) if pagination.has_next else '#' }}"><i class="bi bi-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+            <p>No hay citas{% if estado_filtro %} en esta categor&iacute;a{% endif %}.</p>
+            {% if q %}<p class="small">Sin resultados para <strong>{{ q }}</strong>. <a href="/admin/citas">Limpiar b&uacute;squeda</a></p>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function cambiarEstado(id, estado) {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/admin/citas/cambiar-estado/' + id + '/' + estado;
+    form.style.display = 'none';
+    var csrf = document.createElement('input');
+    csrf.name = 'csrf_token';
+    csrf.value = '{{ csrf_token() }}';
+    form.appendChild(csrf);
+    var next = document.createElement('input');
+    next.name = 'next';
+    next.value = window.location.href;
+    form.appendChild(next);
+    document.body.appendChild(form);
+    form.submit();
+}
+function confirmarCancelar(id, nombre, fecha, hora) {
+    if (confirm('\u00bfCancelar turno de ' + nombre + ' el ' + fecha + ' a las ' + hora + '?'))
+        cambiarEstado(id, 'cancelada');
+}
+function eliminarCita(id) {
+    if (confirm('\u00bfEliminar esta cita permanentemente?')) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/citas/eliminar/' + id;
+        form.style.display = 'none';
+        var csrf = document.createElement('input');
+        csrf.name = 'csrf_token';
+        csrf.value = '{{ csrf_token() }}';
+        form.appendChild(csrf);
+        var next = document.createElement('input');
+        next.name = 'next';
+        next.value = window.location.href;
+        form.appendChild(next);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

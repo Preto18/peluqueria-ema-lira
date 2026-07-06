@@ -1,0 +1,66 @@
+{% extends 'public/base_public.html' %}
+{% block title %}Turno confirmado{% endblock %}
+{% block page_class %}confirm-page{% endblock %}
+{% block wrapper_class %}confirm-wrapper{% endblock %}
+{% block content %}
+<div class="confirm-card">
+    <div class="confirm-check-wrap">
+        <div class="confirm-check">
+            <i class="bi bi-check-lg"></i>
+        </div>
+        <div class="confirm-check-ring"></div>
+    </div>
+    <h1 class="confirm-title">Turno solicitado</h1>
+    <p class="confirm-subtitle">Est&aacute; pendiente de aprobaci&oacute;n. Te confirmaremos por WhatsApp.</p>
+
+    <div class="confirm-detail">
+        <div class="confirm-row">
+            <span>Servicio</span>
+            <span>{{ cita.servicio }}</span>
+        </div>
+        <div class="confirm-row">
+            <span>Fecha</span>
+            <span>{{ cita.fecha.strftime('%d/%m/%Y') }}</span>
+        </div>
+        <div class="confirm-row">
+            <span>Hora</span>
+            <span>{{ cita.hora }} hs</span>
+        </div>
+        <div class="confirm-row">
+            <span>Cliente</span>
+            <span>{{ cita.cliente.nombre }}</span>
+        </div>
+        {% if cantidad and cantidad > 1 %}
+        <div class="confirm-row">
+            <span>Personas</span>
+            <span>{{ cantidad }}</span>
+        </div>
+        <div class="confirm-row">
+            <span>Precio c/u</span>
+            <span>${{ "{:,.0f}".format(precio_persona).replace(',', '.') }}</span>
+        </div>
+        {% endif %}
+        <div class="confirm-row total">
+            <span>Total</span>
+            <span>${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</span>
+        </div>
+    </div>
+
+    <p class="confirm-address"><i class="bi bi-geo-alt me-1"></i> {{ info.direccion if info else 'Merced 814' }}</p>
+
+    <div class="confirm-actions mb-3">
+        <a href="https://wa.me/{{ info.telefono }}?text=Recordatorio%3A%20turno%20en%20Ema%20Lira%20el%20{{ cita.fecha.strftime('%d/%m') }}%20a%20las%20{{ cita.hora }}hs%20-%20{{ cita.servicio }}%20${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}%20-%20{{ info.direccion }}" target="_blank" class="confirm-btn confirm-btn-primary">
+            <i class="bi bi-whatsapp"></i> Enviarme recordatorio
+        </a>
+    </div>
+
+    <div class="confirm-actions">
+        <a href="/agendar" class="confirm-btn confirm-btn-primary">
+            <i class="bi bi-plus"></i> Agendar otro
+        </a>
+        <a href="/" class="confirm-btn confirm-btn-secondary">
+            Volver al inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

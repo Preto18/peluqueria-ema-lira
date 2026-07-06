@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Editar Gasto{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-cash-stack me-2 text-danger"></i> Editar Gasto</div>
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ request.referrer or '' }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Descripcion *</label>
+                    <input type="text" name="descripcion" class="form-control" value="{{ gasto.descripcion }}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Monto *</label>
+                    <input type="number" step="0.01" name="monto" class="form-control" value="{{ gasto.monto }}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Categoria</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Sin categoria</option>
+                        <option value="Insumos" {{ 'selected' if gasto.categoria == 'Insumos' else '' }}>Insumos</option>
+                        <option value="Servicios" {{ 'selected' if gasto.categoria == 'Servicios' else '' }}>Servicios</option>
+                        <option value="Alquiler" {{ 'selected' if gasto.categoria == 'Alquiler' else '' }}>Alquiler</option>
+                        <option value="Equipamiento" {{ 'selected' if gasto.categoria == 'Equipamiento' else '' }}>Equipamiento</option>
+                        <option value="Marketing" {{ 'selected' if gasto.categoria == 'Marketing' else '' }}>Marketing</option>
+                        <option value="Otros" {{ 'selected' if gasto.categoria == 'Otros' else '' }}>Otros</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="/admin/gastos" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
