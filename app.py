@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from datetime import datetime, date, timedelta
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -165,6 +165,12 @@ def crear_admin_si_no_existe():
 @app.cli.command('init-db')
 def init_db_command():
     """Inicializa la base de datos y crea el admin por defecto."""
+    # Ejecutar migraciones pendientes (por si flask db upgrade no corrió en deploy)
+    try:
+        upgrade()
+        print('Migraciones aplicadas.')
+    except Exception as e:
+        print(f'Error en migraciones (continuando): {e}')
     db.create_all()
     crear_admin_si_no_existe()
     if not Service.query.first():
