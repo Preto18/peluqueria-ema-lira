@@ -339,7 +339,10 @@ def api_citas_semana():
 
 @app.route('/agendar')
 def agendar():
-    servicios = Service.query.order_by(Service.nombre).all()
+    try:
+        servicios = Service.query.order_by(Service.nombre).all()
+    except Exception:
+        servicios = []
     return render_template('public/agendar.html', servicios=servicios, promo=PROMO, info=INFO)
 
 
