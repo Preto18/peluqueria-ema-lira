@@ -1240,6 +1240,8 @@ body {
 
 @media (max-width: 400px) {
     .login-card { padding: 1.5rem 1rem; }
+    .booking-row { flex-direction: column; gap: 0.5rem; }
+    .booking-row .booking-field { min-width: 100%; }
     .confirm-card { padding: 1.5rem 1rem; }
 }
 
@@ -1506,73 +1508,6 @@ body {
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-}
-
-.booking-promo-badge {
-    font-size: 0.6rem;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-}
-.booking-promo-badge.active {
-    color: #000;
-}
-.booking-promo-badge.hint {
-    color: #888;
-}
-
-@media (max-width: 576px) {
-    .booking-page .booking-wrapper {
-        padding: 0.5rem;
-        align-items: flex-start;
-    }
-    .booking-page .booking-card {
-        padding: 0.75rem;
-        max-width: 100%;
-        margin-top: 0;
-    }
-    .booking-page .booking-field {
-        margin-bottom: 0.35rem;
-    }
-    .booking-page .booking-field-label {
-        font-size: 0.55rem;
-        margin-bottom: 0.15rem;
-        letter-spacing: 0.4px;
-    }
-    .booking-page .booking-select,
-    .booking-page .booking-date-input,
-    .booking-page .booking-input {
-        padding: 0.35rem 0.55rem;
-        font-size: 0.8rem;
-        border-radius: 8px;
-    }
-    .booking-page .booking-row {
-        gap: 0.4rem;
-        flex-direction: row !important;
-    }
-    .booking-page .booking-row .booking-field {
-        min-width: 0;
-        margin-bottom: 0;
-    }
-    .booking-page .booking-row-date .booking-field {
-        flex: 1;
-    }
-    .booking-page .booking-submit {
-        padding: 0.6rem;
-        font-size: 0.85rem;
-        margin-top: 0.4rem;
-        border-radius: 10px;
-    }
-    .booking-page .footer-minimal-static { display: none; }
-    .booking-page .whatsapp-float { display: none; }
-    .booking-page .navbar-public { padding: 0.4rem 0; }
-    .booking-page .brand-logo { width: 28px; height: 28px; }
-    .booking-page .brand-text { font-size: 1rem; }
-    .booking-page .booking-promo-badge {
-        font-size: 0.5rem;
-    }
 }
 
 /* ====== CONFIRMACIÓN REDISEÑADO ====== */

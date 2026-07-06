@@ -1,7 +1,7 @@
 {% extends 'public/base_public.html' %}
 {% block content %}
 <div class="booking-card">
-    <div class="booking-card-header d-none d-sm-block">
+    <div class="booking-card-header">
         <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="booking-logo" width="52" height="52">
         <div class="booking-icon-title">Ema Lira</div>
         <div class="booking-icon-sub">Agend&aacute; tu turno</div>
@@ -21,41 +21,41 @@
             </select>
         </div>
 
-        <div class="booking-row booking-row-date">
+        <div class="booking-row">
             <div class="booking-field flex-grow-1">
                 <div class="booking-field-label"><i class="bi bi-calendar3 me-1"></i> Fecha</div>
                 <input type="date" name="fecha" id="fecha-input" class="booking-date-input" required>
             </div>
-            <div class="booking-field flex-grow-1">
-                <div class="booking-field-label"><i class="bi bi-clock me-1"></i> Horario</div>
-                <select id="horario-select" class="booking-select" disabled>
-                    <option value="">Primero fecha</option>
+            <div class="booking-field" style="min-width:100px">
+                <div class="booking-field-label"><i class="bi bi-people me-1"></i> Personas</div>
+                <select name="cantidad_personas" id="cantidad" class="booking-select">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
                 </select>
             </div>
         </div>
 
         <div class="booking-field">
-            <div class="booking-field-label"><i class="bi bi-people me-1"></i> Personas <span id="promo-badge" class="booking-promo-badge"></span></div>
-            <select name="cantidad_personas" id="cantidad" class="booking-select" style="max-width:100px">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+            <div class="booking-field-label"><i class="bi bi-clock me-1"></i> Horario</div>
+            <select id="horario-select" class="booking-select" disabled>
+                <option value="">Seleccion&aacute; una fecha primero</option>
             </select>
         </div>
 
-        <div id="promo-info" class="booking-promo d-none d-sm-block"></div>
+        <div id="promo-info" class="booking-promo"></div>
 
         <div class="booking-field">
             <div class="booking-field-label"><i class="bi bi-person me-1"></i> Tus datos</div>
             <div class="booking-row">
                 <input type="text" name="nombre" class="booking-input flex-grow-1" placeholder="Nombre" required>
-                <input type="tel" name="telefono" class="booking-input flex-grow-1" placeholder="11 1234-5678" required>
+                <input type="tel" name="telefono" class="booking-input" placeholder="11 1234-5678" required>
             </div>
         </div>
 
-        <div class="booking-summary d-none d-sm-block">
+        <div class="booking-summary">
             <div class="booking-summary-row"><span>Servicio</span><span id="resumen-servicio" class="fw-semibold">&mdash;</span></div>
             <div class="booking-summary-row"><span>Fecha</span><span id="resumen-fecha" class="fw-semibold">&mdash;</span></div>
             <div class="booking-summary-row"><span>Hora</span><span id="resumen-hora" class="fw-semibold">&mdash;</span></div>
@@ -64,7 +64,7 @@
         </div>
 
         <button type="submit" class="booking-submit" id="btn-submit" disabled>
-            <span id="btn-text">Elegí un horario</span>
+            <span id="btn-text">Confirmar Turno</span>
             <i class="bi bi-arrow-right" id="btn-icon"></i>
             <span class="spinner-border spinner-border-sm d-none" id="btn-spinner" role="status"></span>
         </button>
@@ -89,16 +89,6 @@ function getSelectedService() {
     };
 }
 
-function actualizarBoton(total) {
-    const btn = document.getElementById('btn-submit');
-    const btnText = document.getElementById('btn-text');
-    if (btn.disabled) {
-        btnText.textContent = 'Elegí un horario';
-        return;
-    }
-    btnText.textContent = 'Confirmar — $' + total.toLocaleString('es-AR');
-}
-
 function actualizarPrecio() {
     const fecha = document.getElementById('fecha-input').value;
     const cant = parseInt(document.getElementById('cantidad').value);
@@ -109,43 +99,18 @@ function actualizarPrecio() {
     const precio = esPromo ? 10000 : servicio.precio;
     const total = precio * cant;
     document.getElementById('servicio-input').value = servicio.nombre;
-
-    const badge = document.getElementById('promo-badge');
-    if (esPromo) {
-        badge.textContent = 'Promo +1 $10.000 c/u';
-        badge.className = 'booking-promo-badge active';
-    } else if (PROMO_DIAS.includes(dia) && cant === 1) {
-        badge.textContent = 'Traé amigos: $10.000 c/u';
-        badge.className = 'booking-promo-badge hint';
-    } else {
-        badge.textContent = '';
-        badge.className = 'booking-promo-badge';
-    }
-
+    document.getElementById('resumen-servicio').textContent = servicio.nombre;
+    document.getElementById('resumen-personas').textContent = cant;
+    document.getElementById('resumen-total').textContent = '$' + total.toLocaleString('es-AR');
     const promoInfo = document.getElementById('promo-info');
-    if (promoInfo) {
-        promoInfo.classList.remove('show');
-        if (esPromo) {
-            promoInfo.classList.add('show');
-            promoInfo.innerHTML = '<i class="bi bi-lightning-fill me-1"></i> <strong>Promo +1 activada!</strong> $' + precio.toLocaleString('es-AR') + ' c/u';
-        } else if (PROMO_DIAS.includes(dia) && cant === 1) {
-            promoInfo.classList.add('show');
-            promoInfo.innerHTML = '<i class="bi bi-info-circle me-1"></i> <strong>Promo +1:</strong> Vení con amigos y paguen $' + (10000).toLocaleString('es-AR') + ' c/u';
-        }
+    promoInfo.classList.remove('show');
+    if (esPromo) {
+        promoInfo.classList.add('show');
+        promoInfo.innerHTML = '<i class="bi bi-lightning-fill me-1"></i> <strong>Promo +1 activada!</strong> $' + precio.toLocaleString('es-AR') + ' c/u';
+    } else if (PROMO_DIAS.includes(dia) && cant === 1) {
+        promoInfo.classList.add('show');
+        promoInfo.innerHTML = '<i class="bi bi-info-circle me-1"></i> <strong>Promo +1:</strong> Vení con amigos y paguen $' + (10000).toLocaleString('es-AR') + ' c/u';
     }
-
-    const rServicio = document.getElementById('resumen-servicio');
-    if (rServicio) rServicio.textContent = servicio.nombre;
-    const rPersonas = document.getElementById('resumen-personas');
-    if (rPersonas) rPersonas.textContent = cant;
-    const rTotal = document.getElementById('resumen-total');
-    if (rTotal) rTotal.textContent = '$' + total.toLocaleString('es-AR');
-
-    const partes = fecha.split('-');
-    const rFecha = document.getElementById('resumen-fecha');
-    if (rFecha) rFecha.textContent = partes[2] + '/' + partes[1] + '/' + partes[0];
-
-    actualizarBoton(total);
 }
 
 function proximoDiaHabil(desde) {
@@ -166,33 +131,18 @@ document.getElementById('cantidad').addEventListener('change', actualizarPrecio)
 document.getElementById('horario-select').addEventListener('change', function() {
     const h = this.value;
     document.getElementById('hora-input').value = h;
+    document.getElementById('resumen-hora').textContent = h || '—';
     document.getElementById('btn-submit').disabled = !h;
-    const rHora = document.getElementById('resumen-hora');
-    if (rHora) rHora.textContent = h || '—';
-    const fecha = document.getElementById('fecha-input').value;
-    const cant = parseInt(document.getElementById('cantidad').value);
-    if (h && fecha) {
-        const dia = new Date(fecha + 'T12:00:00').getDay();
-        const servicio = getSelectedService();
-        const esPromo = PROMO_DIAS.includes(dia) && cant > 1;
-        const precio = esPromo ? 10000 : servicio.precio;
-        actualizarBoton(precio * cant);
-    } else {
-        document.getElementById('btn-text').textContent = 'Elegí un horario';
-    }
 });
 
 document.getElementById('fecha-input').addEventListener('change', function() {
     const fecha = this.value;
+    const partes = fecha.split('-');
+    document.getElementById('resumen-fecha').textContent = partes[2] + '/' + partes[1] + '/' + partes[0];
     document.getElementById('hora-input').value = '';
     document.getElementById('horario-select').value = '';
     document.getElementById('btn-submit').disabled = true;
-    document.getElementById('btn-text').textContent = 'Elegí un horario';
-    const rHora = document.getElementById('resumen-hora');
-    if (rHora) rHora.textContent = '—';
-    const partes = fecha.split('-');
-    const rFecha = document.getElementById('resumen-fecha');
-    if (rFecha) rFecha.textContent = partes[2] + '/' + partes[1] + '/' + partes[0];
+    document.getElementById('resumen-hora').textContent = '—';
     actualizarPrecio();
 
     const horarioSelect = document.getElementById('horario-select');
