@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Servicios - Peluqueria Ema Lira{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-scissors me-2"></i> Servicios</span>
+        <a href="/admin/servicios/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nuevo Servicio</a>
+    </div>
+    <div class="card-body">
+        {% if servicios %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Duracion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in servicios %}
+                    <tr>
+                        <td class="fw-bold">{{ s.nombre }}</td>
+                        <td>${{ "{:,.0f}".format(s.precio).replace(',', '.') }}</td>
+                        <td>{{ s.duracion }} min</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/admin/servicios/editar/{{ s.id }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                                <form method="POST" action="/admin/servicios/eliminar/{{ s.id }}" style="display:inline" onsubmit="return confirm('&iquest;Eliminar el servicio &quot;{{ s.nombre }}&quot;?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-scissors fs-1 d-block mb-2"></i>
+            <p>No hay servicios cargados.</p>
+            <a href="/admin/servicios/nuevo" class="btn btn-dark">Crear primer servicio</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 import pytest
-from app import app, db, User, Cliente, Cita, Pago, Gasto, Producto, SERVICIOS, PROMO, limiter
+from app import app, db, User, Cliente, Cita, Pago, Gasto, Producto, Service, PROMO, limiter
 from datetime import date, time, datetime
 from werkzeug.security import generate_password_hash
 from unittest.mock import patch
@@ -139,20 +139,25 @@ class TestPromoLogic:
         assert PROMO['precio'] == 10000
         assert PROMO['activo'] is True
 
-    def test_promo_price_calculation(self):
-        # Test backend promo logic
-        from app import SERVICIOS, PROMO
+    def test_promo_price_calculation(self, client):
+        from app import PROMO
         from datetime import date
-        
-        servicio = next(s for s in SERVICIOS if s['nombre'] == 'Corte de cabello')
-        
-        # Miércoles (weekday=2) con 2 personas -> promo
-        fecha_miercoles = date(2026, 7, 8)  # Miércoles
-        dia_semana = fecha_miercoles.weekday()
-        assert dia_semana == 2
-        
-        precio_normal = servicio['precio']
-        precio_promo = PROMO['precio'] if dia_semana in PROMO['dias_valido'] and 2 > 1 else precio_normal
-        
-        assert precio_promo == 10000
-        assert precio_normal == 12000
+
+        with app.app_context():
+            db.create_all()
+            if not Service.query.first():
+                servicio = Service(nombre='Corte de cabello', precio=12000, duracion=30)
+                db.session.add(servicio)
+                db.session.commit()
+            else:
+                servicio = Service.query.first()
+
+            fecha_miercoles = date(2026, 7, 8)
+            dia_semana = fecha_miercoles.weekday()
+            assert dia_semana == 2
+
+            precio_normal = servicio.precio
+            precio_promo = PROMO['precio'] if dia_semana in PROMO['dias_valido'] and 2 > 1 else precio_normal
+
+            assert precio_promo == 10000
+            assert precio_normal == 12000

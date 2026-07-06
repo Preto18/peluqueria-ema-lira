@@ -73,16 +73,6 @@ def inject_now():
     return {'now': datetime.now}
 
 
-SERVICIOS = [
-    {'nombre': 'Corte de cabello', 'precio': 12000, 'duracion': 30},
-    {'nombre': 'Corte y barba', 'precio': 15000, 'duracion': 40},
-    {'nombre': 'Barba', 'precio': 5000, 'duracion': 15},
-    {'nombre': 'Tinte', 'precio': 20000, 'duracion': 60},
-    {'nombre': 'Lavado', 'precio': 4000, 'duracion': 10},
-    {'nombre': 'Corte infantil', 'precio': 8000, 'duracion': 20},
-    {'nombre': 'Corte + Barba + Lavado', 'precio': 22000, 'duracion': 50},
-]
-
 PROMO = {
     'activo': True,
     'nombre': 'Promo +1',
@@ -158,6 +148,13 @@ class Gasto(db.Model):
     fecha = db.Column(db.DateTime, default=datetime.now)
 
 
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.Numeric(10, 2), nullable=False, default=0)
+    duracion = db.Column(db.Integer, default=30)
+
+
 def crear_admin_si_no_existe():
     if not User.query.filter_by(username='admin').first():
         admin = User(username='admin', password_hash=generate_password_hash('admin123'))
@@ -170,6 +167,10 @@ def init_db_command():
     """Inicializa la base de datos y crea el admin por defecto."""
     db.create_all()
     crear_admin_si_no_existe()
+    if not Service.query.first():
+        db.session.add(Service(nombre='Corte de cabello', precio=12000, duracion=30))
+        db.session.commit()
+        print('Servicio por defecto creado.')
     print('Base de datos inicializada.')
 
 
@@ -248,7 +249,7 @@ def health():
 
 @app.route('/')
 def landing():
-    return render_template('landing.html', servicios=SERVICIOS, promo=PROMO, info=INFO)
+    return render_template('landing.html', promo=PROMO, info=INFO)
 
 
 # --- Dashboard Admin ---
@@ -332,7 +333,8 @@ def api_citas_semana():
 
 @app.route('/agendar')
 def agendar():
-    return render_template('public/agendar.html', servicios=SERVICIOS, promo=PROMO, info=INFO)
+    servicios = Service.query.order_by(Service.nombre).all()
+    return render_template('public/agendar.html', servicios=servicios, promo=PROMO, info=INFO)
 
 
 @app.route('/api/horarios')
@@ -389,12 +391,12 @@ def confirmar_turno():
         except ValueError:
             pass
 
-    servicio_info = next((s for s in SERVICIOS if s['nombre'] == servicio_nombre), None)
+    servicio_info = Service.query.filter_by(nombre=servicio_nombre).first()
     dia_semana = fecha.weekday()
     if PROMO['activo'] and dia_semana in PROMO['dias_valido'] and cantidad_personas > 1:
         precio_por_persona = PROMO['precio']
     else:
-        precio_por_persona = servicio_info['precio'] if servicio_info else 0
+        precio_por_persona = servicio_info.precio if servicio_info else 0
     precio_total = precio_por_persona * cantidad_personas
 
     cliente = Cliente.query.filter_by(telefono=telefono).first()
@@ -428,6 +430,66 @@ def confirmar_turno():
 
     return render_template('public/confirmacion.html', cita=cita, servicio=servicio_info,
                            cantidad=cantidad_personas, precio_persona=precio_por_persona, info=INFO)
+
+
+# --- Admin: Servicios ---
+
+
+@app.route('/admin/servicios')
+@login_required
+def listar_servicios():
+    servicios = Service.query.order_by(Service.nombre).all()
+    return render_template('servicios.html', servicios=servicios)
+
+
+@app.route('/admin/servicios/nuevo', methods=['GET', 'POST'])
+@login_required
+def nuevo_servicio():
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        if not nombre:
+            flash('El nombre es obligatorio.', 'danger')
+            return render_template('servicio_form.html', servicio=request.form)
+        try:
+            precio = float(request.form.get('precio', 0))
+            duracion = int(request.form.get('duracion', 30))
+        except (ValueError, TypeError):
+            flash('Precio o duración inválidos.', 'danger')
+            return render_template('servicio_form.html', servicio=request.form)
+        servicio = Service(nombre=nombre, precio=precio, duracion=duracion)
+        db.session.add(servicio)
+        db.session.commit()
+        flash('Servicio creado correctamente', 'success')
+        return redirect(url_for('listar_servicios'))
+    return render_template('servicio_form.html', servicio=None)
+
+
+@app.route('/admin/servicios/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_servicio(id):
+    servicio = Service.query.get_or_404(id)
+    if request.method == 'POST':
+        servicio.nombre = request.form.get('nombre', servicio.nombre).strip()
+        try:
+            servicio.precio = float(request.form.get('precio', 0))
+            servicio.duracion = int(request.form.get('duracion', 30))
+        except (ValueError, TypeError):
+            flash('Precio o duración inválidos.', 'danger')
+            return render_template('servicio_form.html', servicio=servicio)
+        db.session.commit()
+        flash('Servicio actualizado', 'success')
+        return redirect(url_for('listar_servicios'))
+    return render_template('servicio_form.html', servicio=servicio)
+
+
+@app.route('/admin/servicios/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar_servicio(id):
+    servicio = Service.query.get_or_404(id)
+    db.session.delete(servicio)
+    db.session.commit()
+    flash('Servicio eliminado', 'success')
+    return redirect(url_for('listar_servicios'))
 
 
 # --- Admin: Clientes ---
@@ -563,7 +625,8 @@ def nueva_cita():
         flash('Cita registrada correctamente', 'success')
         next_page = request.form.get('next') or request.referrer or url_for('listar_citas')
         return redirect(next_page)
-    return render_template('cita_form.html', cita=None, clientes=clientes, servicios=SERVICIOS)
+    servicios = Service.query.order_by(Service.nombre).all()
+    return render_template('cita_form.html', cita=None, clientes=clientes, servicios=servicios)
 
 
 @app.route('/admin/citas/editar/<int:id>', methods=['GET', 'POST'])
@@ -601,7 +664,8 @@ def editar_cita(id):
         flash('Cita actualizada', 'success')
         next_page = request.form.get('next') or request.referrer or url_for('listar_citas')
         return redirect(next_page)
-    return render_template('cita_form.html', cita=cita, clientes=clientes, servicios=SERVICIOS)
+    servicios = Service.query.order_by(Service.nombre).all()
+    return render_template('cita_form.html', cita=cita, clientes=clientes, servicios=servicios)
 
 
 @app.route('/admin/citas/eliminar/<int:id>', methods=['POST'])
