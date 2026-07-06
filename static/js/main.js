@@ -7,13 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    var sidebarToggle = document.getElementById('sidebarToggle');
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
-    }
-
     var nav = document.getElementById('mainNav');
     if (nav) {
         window.addEventListener('scroll', function() {
