@@ -65,7 +65,9 @@
                         <td class="fw-bold">${{ "{:,.0f}".format(g.monto).replace(',', '.') }}</td>
                         <td>
                             <div class="d-flex gap-1">
-                                <a href="/admin/gastos/editar/{{ g.id }}" class="btn btn-outline-dark btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                <form method="GET" action="/admin/gastos/editar/{{ g.id }}" style="display:inline">
+                                    <button type="submit" class="btn btn-outline-dark btn-sm" title="Editar"><i class="bi bi-pencil"></i></button>
+                                </form>
                                 <form method="POST" action="/admin/gastos/eliminar/{{ g.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar este gasto?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-outline-dark btn-sm"><i class="bi bi-trash"></i></button>
