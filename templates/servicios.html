@@ -28,11 +28,11 @@
                         <td>${{ "{:,.0f}".format(s.precio).replace(',', '.') }}</td>
                         <td>{{ s.duracion }} min</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="/admin/servicios/editar/{{ s.id }}" class="btn btn-outline-dark"><i class="bi bi-pencil"></i></a>
+                            <div class="d-flex gap-1">
+                                <a href="/admin/servicios/editar/{{ s.id }}" class="btn btn-outline-dark btn-sm"><i class="bi bi-pencil"></i></a>
                                 <form method="POST" action="/admin/servicios/eliminar/{{ s.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar el servicio "{{ s.nombre }}"?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-outline-dark"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>
                         </td>

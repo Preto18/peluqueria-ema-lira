@@ -72,11 +72,11 @@
                         <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ p.metodo_pago }}</span></td>
                         <td class="fw-bold">${{ "{:,.0f}".format(p.monto).replace(',', '.') }}</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="/admin/pagos/editar/{{ p.id }}" class="btn btn-outline-dark" title="Editar"><i class="bi bi-pencil"></i></a>
+                            <div class="d-flex gap-1">
+                                <a href="/admin/pagos/editar/{{ p.id }}" class="btn btn-outline-dark btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
                                 <form method="POST" action="/admin/pagos/eliminar/{{ p.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar este pago?')">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-outline-dark"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>
                         </td>

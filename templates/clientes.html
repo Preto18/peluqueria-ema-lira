@@ -32,11 +32,11 @@
                         <td class="d-none d-md-table-cell">{{ c.notas or '-' }}</td>
                         <td class="d-none d-sm-table-cell">{{ c.fecha_registro.strftime('%d/%m/%Y') if c.fecha_registro else '-' }}</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-<a href="/admin/clientes/editar/{{ c.id }}" class="btn btn-outline-dark"><i class="bi bi-pencil"></i></a>
+                            <div class="d-flex gap-1">
+<a href="/admin/clientes/editar/{{ c.id }}" class="btn btn-outline-dark btn-sm"><i class="bi bi-pencil"></i></a>
                                 <form method="POST" action="/admin/clientes/eliminar/{{ c.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar este cliente?')">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-outline-dark"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>
                         </td>

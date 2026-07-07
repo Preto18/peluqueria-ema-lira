@@ -44,16 +44,16 @@
                         <td class="d-none d-sm-table-cell">${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
                         <td class="d-none d-md-table-cell">{{ cita.notas or '-' }}</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
+                            <div class="d-flex gap-1">
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/aceptada" style="display:inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-dark" title="Aceptar"><i class="bi bi-check-lg"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm" title="Aceptar"><i class="bi bi-check-lg"></i></button>
                                 </form>
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/cancelada" style="display:inline" onsubmit="return confirm('&iquest;Rechazar este turno?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-dark" title="Rechazar"><i class="bi bi-x-lg"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm" title="Rechazar"><i class="bi bi-x-lg"></i></button>
                                 </form>
                             </div>
                         </td>
