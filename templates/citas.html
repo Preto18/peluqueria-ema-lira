@@ -74,7 +74,7 @@
                         <td class="d-none d-sm-table-cell">${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
                         <td>
                             {% set badge_class = 'bg-dark' if cita.estado == 'completada' else 'bg-secondary' if cita.estado in ('aceptada', 'pendiente') else 'bg-light text-muted border' %}
-                            <span class="badge {{ badge_class }}">{{ cita.estado }}</span>
+                            <span class="badge {{ badge_class }}">{{ cita.estado|capitalize }}</span>
                         </td>
                         <td>
                             <div class="dropdown">

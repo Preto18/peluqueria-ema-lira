@@ -88,10 +88,12 @@ def ensure_db():
             pass
 
 
+AR_TZ = timezone(timedelta(hours=-3))
+
 @app.context_processor
 def inject_now():
     return {
-        'now': datetime.now,
+        'now': lambda: datetime.now(AR_TZ),
         'entidades': ENTIDADES_EXPORT,
     }
 

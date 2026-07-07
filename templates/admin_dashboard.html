@@ -45,7 +45,7 @@
     </div>
     <div class="col-12 col-xl-5">
         <div class="card">
-            <div class="card-header"><i class="bi bi-pie-chart me-2"></i> Servicios mas pedidos</div>
+            <div class="card-header"><i class="bi bi-pie-chart me-2"></i> Servicios m&aacute;s pedidos</div>
             <div class="card-body chart-wrapper">
                 <canvas id="chartServicios"></canvas>
             </div>
@@ -90,7 +90,7 @@
                                 <td class="d-none d-sm-table-cell">${{ "{:,.0f}".format(cita.precio).replace(',', '.') }}</td>
                                 <td>
                                     <span class="badge bg-{{ 'dark' if cita.estado == 'completada' else 'secondary' if cita.estado == 'aceptada' else 'secondary' if cita.estado == 'pendiente' else 'light text-muted border' }}">
-                                        {{ cita.estado[:4] if cita.estado != 'completada' else 'OK' }}</span>
+                                        {{ (cita.estado[:4]|capitalize) if cita.estado != 'completada' else 'OK' }}</span>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -111,11 +111,11 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header"><i class="bi bi-lightning me-2"></i> Acciones Rapidas</div>
+            <div class="card-header"><i class="bi bi-lightning me-2"></i> Acciones R&aacute;pidas</div>
             <div class="card-body">
                 <div class="row g-2">
                     <div class="col-md-2 col-6">
-                        <a href="/admin/turnos-pendientes" class="btn btn-dark w-100 py-2 py-md-3">
+                        <a href="/admin/turnos-pendientes" class="btn btn-outline-dark w-100 py-2 py-md-3">
                             <i class="bi bi-hourglass-split fs-4 d-block mb-1"></i>
                             <small>Turnos Pendientes</small>
                         </a>
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             } else {
-                document.getElementById('chartServicios').parentElement.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart fs-1 d-block mb-2"></i>Sin datos aun</div>';
+                document.getElementById('chartServicios').parentElement.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart fs-1 d-block mb-2"></i>Sin datos a&uacute;n</div>';
             }
         });
     fetch('/api/citas-semana')

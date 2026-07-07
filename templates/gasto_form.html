@@ -9,7 +9,7 @@
             <input type="hidden" name="next" value="{{ request.referrer or '' }}">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Descripcion *</label>
+                    <label class="form-label">Descripci&oacute;n *</label>
                     <input type="text" name="descripcion" class="form-control" value="{{ gasto.descripcion }}" required>
                 </div>
                 <div class="col-md-3 mb-3">
@@ -17,9 +17,9 @@
                     <input type="number" step="0.01" name="monto" class="form-control" value="{{ gasto.monto }}" required>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <label class="form-label">Categoria</label>
+                    <label class="form-label">Categor&iacute;a</label>
                     <select name="categoria" class="form-select">
-                        <option value="">Sin categoria</option>
+                        <option value="">Sin categor&iacute;a</option>
                         <option value="Insumos" {{ 'selected' if gasto.categoria == 'Insumos' else '' }}>Insumos</option>
                         <option value="Servicios" {{ 'selected' if gasto.categoria == 'Servicios' else '' }}>Servicios</option>
                         <option value="Alquiler" {{ 'selected' if gasto.categoria == 'Alquiler' else '' }}>Alquiler</option>

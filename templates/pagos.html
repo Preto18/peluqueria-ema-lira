@@ -69,7 +69,7 @@
                         <td>{{ p.fecha.strftime('%d/%m') }} <span class="d-none d-sm-inline">{{ p.fecha.strftime('%Y %H:%M') }}</span></td>
                         <td class="fw-bold">{{ p.cliente.nombre }}</td>
                         <td class="d-none d-md-table-cell">{{ p.concepto or '-' }}</td>
-                        <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ p.metodo_pago }}</span></td>
+                        <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ p.metodo_pago|replace('mercadopago', 'Mercado Pago')|title }}</span></td>
                         <td class="fw-bold">${{ "{:,.0f}".format(p.monto).replace(',', '.') }}</td>
                         <td>
                             <div class="d-flex gap-1 align-items-center">
