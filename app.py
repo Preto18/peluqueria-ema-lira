@@ -113,7 +113,7 @@ INFO = {
         {'dia': 'Martes', 'horario': '15:00 a 20:00'},
         {'dia': 'Mi\u00e9rcoles a S\u00e1bado', 'horario': '09:00 a 12:00 y 15:00 a 20:00'},
     ],
-    'telefono': '5491123456789',
+        'telefono': '5492477592784',
 }
 
 ESTADOS_CITA = ['pendiente', 'aceptada', 'completada', 'cancelada']
