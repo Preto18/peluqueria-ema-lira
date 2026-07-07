@@ -74,13 +74,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Asegura que todas las tablas existan al arrancar (Neon resetea la DB)
-with app.app_context():
-    try:
-        db.create_all()
-    except Exception:
-        pass
-
 _db_ok = False
 
 
