@@ -3,12 +3,12 @@
 {% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-hourglass-split me-2 text-danger"></i> Turnos Pendientes de Aprobaci&oacute;n</span>
+        <span><i class="bi bi-hourglass-split me-2"></i> Turnos Pendientes de Aprobaci&oacute;n</span>
     </div>
     <div class="card-body">
         {% if citas %}
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="citas-table">
                 <thead>
                     <tr>
                         <th>Cliente</th>
@@ -18,13 +18,15 @@
                         <th>Servicio</th>
                         <th class="d-none d-sm-table-cell">Precio</th>
                         <th class="d-none d-md-table-cell">Notas</th>
-                        <th>Acciones</th>
+                        <th style="width:90px">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% set hoy = now().strftime('%Y-%m-%d') %}
                     {% for cita in citas %}
-                    <tr>
-                        <td class="fw-bold">{{ cita.cliente.nombre }}</td>
+                    {% set es_hoy = cita.fecha.strftime('%Y-%m-%d') == hoy %}
+                    <tr class="row-pendiente{{ ' row-hoy' if es_hoy }}">
+                        <td>{{ cita.cliente.nombre }}</td>
                         <td class="d-none d-md-table-cell">
                             {% if cita.cliente.telefono %}
                             <a href="https://wa.me/{{ cita.cliente.telefono }}" target="_blank" class="text-decoration-none" title="WhatsApp">
@@ -32,8 +34,12 @@
                             </a>
                             {% else %}-{% endif %}
                         </td>
-                        <td>{{ cita.fecha.strftime('%d/%m') }} <span class="d-sm-none text-muted">{{ cita.hora }}</span></td>
-                        <td class="d-none d-sm-table-cell">{{ cita.hora }}</td>
+                        <td>
+                            {{ cita.fecha.strftime('%d/%m') }}
+                            {% if es_hoy %}<span class="badge bg-dark ms-1">Hoy</span>{% endif %}
+                            <span class="d-sm-none text-muted ms-1">{{ cita.hora }}</span>
+                        </td>
+                        <td class="d-none d-sm-table-cell">{{ cita.hora }}hs</td>
                         <td class="text-truncate" style="max-width:90px">{{ cita.servicio }}</td>
                         <td class="d-none d-sm-table-cell">${{ '{:,.0f}'.format(cita.precio).replace(',', '.') }}</td>
                         <td class="d-none d-md-table-cell">{{ cita.notas or '-' }}</td>
@@ -42,12 +48,12 @@
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/aceptada" style="display:inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-success" title="Aceptar"><i class="bi bi-check-lg"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark" title="Aceptar"><i class="bi bi-check-lg"></i></button>
                                 </form>
                                 <form method="POST" action="/admin/citas/cambiar-estado/{{ cita.id }}/cancelada" style="display:inline" onsubmit="return confirm('&iquest;Rechazar este turno?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="next" value="{{ request.url }}">
-                                    <button type="submit" class="btn btn-outline-danger" title="Rechazar"><i class="bi bi-x-lg"></i></button>
+                                    <button type="submit" class="btn btn-outline-dark" title="Rechazar"><i class="bi bi-x-lg"></i></button>
                                 </form>
                             </div>
                         </td>
