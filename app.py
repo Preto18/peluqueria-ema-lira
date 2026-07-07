@@ -507,7 +507,7 @@ def confirmar_turno():
         db.session.add(cliente)
         db.session.flush()
     else:
-        if not cliente.nombre and nombre:
+        if nombre and cliente.nombre != nombre:
             cliente.nombre = nombre
 
     activos = Cita.query.filter(Cita.cliente_id == cliente.id, Cita.estado.in_(['pendiente', 'aceptada'])).count()
