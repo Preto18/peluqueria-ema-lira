@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import logging
+import csv
+import io
+from decimal import Decimal
 from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__)
@@ -70,7 +73,10 @@ migrate = Migrate(app, db)
 
 @app.context_processor
 def inject_now():
-    return {'now': datetime.now}
+    return {
+        'now': datetime.now,
+        'entidades': ENTIDADES_EXPORT,
+    }
 
 
 PROMO = {
@@ -947,6 +953,140 @@ def eliminar_gasto(id):
     flash('Gasto eliminado', 'success')
     next_page = request.form.get('next') or request.referrer or url_for('listar_gastos')
     return redirect(next_page)
+
+
+# --- Exportación de Datos ---
+
+ENTIDADES_EXPORT = {
+    'clientes': {
+        'nombre': 'Clientes',
+        'icono': 'bi-people',
+        'columnas': ['ID', 'Nombre', 'Teléfono', 'Email', 'Notas', 'Fecha Registro'],
+        'datos': lambda: Cliente.query.order_by(Cliente.nombre).all(),
+        'filas': lambda rows: [[c.id, c.nombre, c.telefono or '', c.email or '', c.notas or '',
+                                 c.fecha_registro.strftime('%d/%m/%Y %H:%M') if c.fecha_registro else ''] for c in rows],
+    },
+    'citas': {
+        'nombre': 'Citas',
+        'icono': 'bi-calendar-check',
+        'tiene_fechas': True,
+        'columnas': ['ID', 'Cliente', 'Fecha', 'Hora', 'Servicio', 'Precio', 'Estado', 'Notas', 'Creada'],
+        'datos': lambda: Cita.query.order_by(Cita.fecha.desc(), Cita.hora).all(),
+        'filas': lambda rows: [[c.id, c.cliente.nombre, c.fecha.strftime('%d/%m/%Y'), c.hora,
+                                 c.servicio, str(c.precio), c.estado, c.notas or '',
+                                 c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else ''] for c in rows],
+    },
+    'pagos': {
+        'nombre': 'Pagos',
+        'icono': 'bi-cash-coin',
+        'tiene_fechas': True,
+        'columnas': ['ID', 'Cliente', 'Monto', 'Concepto', 'Método', 'Fecha'],
+        'datos': lambda: Pago.query.order_by(Pago.fecha.desc()).all(),
+        'filas': lambda rows: [[p.id, p.cliente.nombre, str(p.monto), p.concepto or '', p.metodo_pago or '',
+                                 p.fecha.strftime('%d/%m/%Y %H:%M') if p.fecha else ''] for p in rows],
+    },
+    'gastos': {
+        'nombre': 'Gastos',
+        'icono': 'bi-cash-stack',
+        'tiene_fechas': True,
+        'columnas': ['ID', 'Descripción', 'Monto', 'Categoría', 'Fecha'],
+        'datos': lambda: Gasto.query.order_by(Gasto.fecha.desc()).all(),
+        'filas': lambda rows: [[g.id, g.descripcion, str(g.monto), g.categoria or '',
+                                 g.fecha.strftime('%d/%m/%Y %H:%M') if g.fecha else ''] for g in rows],
+    },
+    'inventario': {
+        'nombre': 'Inventario',
+        'icono': 'bi-box-seam',
+        'columnas': ['ID', 'Nombre', 'Descripción', 'Precio', 'Stock', 'Categoría'],
+        'datos': lambda: Producto.query.order_by(Producto.nombre).all(),
+        'filas': lambda rows: [[p.id, p.nombre, p.descripcion or '', str(p.precio), p.stock or 0, p.categoria or ''] for p in rows],
+    },
+    'servicios': {
+        'nombre': 'Servicios',
+        'icono': 'bi-scissors',
+        'columnas': ['ID', 'Nombre', 'Precio', 'Duración (min)'],
+        'datos': lambda: Service.query.order_by(Service.nombre).all(),
+        'filas': lambda rows: [[s.id, s.nombre, str(s.precio), s.duracion] for s in rows],
+    },
+}
+
+
+def exportar_csv(nombre_archivo, columnas, filas):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(columnas)
+    for fila in filas:
+        writer.writerow(fila)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv; charset=utf-8',
+        headers={'Content-Disposition': f'attachment; filename={nombre_archivo}'},
+    )
+
+
+def exportar_excel(nombre_archivo, columnas, filas):
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = 'Datos'
+    ws.append(columnas)
+    for fila in filas:
+        ws.append(fila)
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers={'Content-Disposition': f'attachment; filename={nombre_archivo}'},
+    )
+
+
+def exportar_pdf(nombre_archivo, entidad, columnas, filas):
+    from weasyprint import HTML
+    html = render_template('export_pdf.html',
+                           titulo=entidad['nombre'],
+                           columnas=columnas,
+                           filas=filas,
+                           ahora=datetime.now().strftime('%d/%m/%Y %H:%M'))
+    pdf = HTML(string=html).write_pdf()
+    return Response(
+        pdf,
+        mimetype='application/pdf',
+        headers={'Content-Disposition': f'attachment; filename={nombre_archivo}'},
+    )
+
+
+@app.route('/admin/exportar')
+@login_required
+def exportar_hub():
+    return render_template('exportar.html', entidades=ENTIDADES_EXPORT)
+
+
+@app.route('/admin/exportar/<entity>', methods=['POST'])
+@login_required
+def exportar_entity(entity):
+    if entity not in ENTIDADES_EXPORT:
+        flash('Entidad no válida.', 'danger')
+        return redirect(url_for('exportar_hub'))
+
+    entidad = ENTIDADES_EXPORT[entity]
+    formato = request.form.get('formato', 'csv')
+    rows = entidad['datos']()
+    filas = entidad['filas'](rows)
+    columnas = entidad['columnas']
+    ahora = datetime.now().strftime('%Y-%m-%d')
+    nombre_archivo = f'{entity}-{ahora}.{formato}'
+
+    if formato == 'csv':
+        return exportar_csv(nombre_archivo, columnas, filas)
+    elif formato == 'xlsx':
+        return exportar_excel(nombre_archivo, columnas, filas)
+    elif formato == 'pdf':
+        return exportar_pdf(nombre_archivo, entidad, columnas, filas)
+    else:
+        flash('Formato no soportado.', 'danger')
+        return redirect(url_for('exportar_hub'))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Exportar Datos - Peluqueria Ema Lira{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-download me-2"></i> Exportar Datos</div>
+    <div class="card-body">
+        <div class="row g-4">
+            {% for key, entidad in entidades.items() %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border">
+                    <div class="card-body text-center py-4">
+                        <i class="bi {{ entidad.icono }} fs-1 d-block mb-3"></i>
+                        <h5 class="card-title">{{ entidad.nombre }}</h5>
+                        <button type="button" class="btn btn-dark mt-2" data-bs-toggle="modal" data-bs-target="#exportModal{{ key|capitalize }}">
+                            <i class="bi bi-download me-1"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include '_export_modal.html' %}
+{% endblock %}

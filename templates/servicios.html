@@ -4,7 +4,10 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-scissors me-2"></i> Servicios</span>
-        <a href="/admin/servicios/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nuevo Servicio</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#exportModalServicios"><i class="bi bi-download"></i></button>
+            <a href="/admin/servicios/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nuevo Servicio</a>
+        </div>
     </div>
     <div class="card-body">
         {% if servicios %}
@@ -69,3 +72,5 @@
     </div>
 </div>
 {% endblock %}
+
+{% include '_export_modal.html' %}

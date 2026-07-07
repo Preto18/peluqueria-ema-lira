@@ -4,7 +4,10 @@
 <div class="card">
     <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
         <span><i class="bi bi-calendar-check me-2"></i> Citas</span>
-        <a href="/admin/citas/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nueva Cita</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#exportModalCitas"><i class="bi bi-download"></i></button>
+            <a href="/admin/citas/nuevo" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i> Nueva Cita</a>
+        </div>
     </div>
 
     <div class="card-body">
@@ -125,6 +128,8 @@
     </div>
 </div>
 {% endblock %}
+
+{% include '_export_modal.html' %}
 
 {% block extra_scripts %}
 <script>
