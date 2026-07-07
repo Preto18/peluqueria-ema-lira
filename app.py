@@ -189,12 +189,10 @@ def normalizar_telefono(t):
 
 
 def crear_admin_si_no_existe():
-    admin = User.query.filter_by(username='admin').first()
-    if not admin:
-        admin = User(username='admin')
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', password_hash=generate_password_hash('admin123'))
         db.session.add(admin)
-    admin.password_hash = generate_password_hash('admin123')
-    db.session.commit()
+        db.session.commit()
 
 
 @app.cli.command('init-db')
@@ -320,6 +318,26 @@ def logout():
     session.clear()
     flash('Cerraste sesi\u00f3n.', 'info')
     return redirect(url_for('login'))
+
+
+@app.route('/admin/cambiar-password', methods=['GET', 'POST'])
+@login_required
+def cambiar_password():
+    if request.method == 'POST':
+        actual = request.form.get('actual', '')
+        nueva = request.form.get('nueva', '')
+        confirmar = request.form.get('confirmar', '')
+        user = User.query.get(session['user_id'])
+        if not user or not check_password_hash(user.password_hash, actual):
+            flash('La contrase\u00f1a actual es incorrecta.', 'danger')
+        elif nueva != confirmar:
+            flash('Las contrase\u00f1as no coinciden.', 'danger')
+        else:
+            user.password_hash = generate_password_hash(nueva)
+            db.session.commit()
+            flash('Contrase\u00f1a actualizada correctamente.', 'success')
+            return redirect(url_for('admin_dashboard'))
+    return render_template('cambiar_password.html')
 
 
 # --- Landing p\u00fablica ---
