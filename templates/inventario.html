@@ -36,11 +36,11 @@
                         </td>
                         <td class="d-none d-md-table-cell">{{ p.descripcion or '-' }}</td>
                         <td>
-                            <div class="d-flex gap-1">
-                                <form method="GET" action="/admin/inventario/editar/{{ p.id }}" style="display:inline">
+                            <div class="d-flex gap-1 align-items-center">
+                                <form method="GET" action="/admin/inventario/editar/{{ p.id }}">
                                     <button type="submit" class="btn btn-outline-dark" title="Editar"><i class="bi bi-pencil"></i></button>
                                 </form>
-                                <form method="POST" action="/admin/inventario/eliminar/{{ p.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar producto?')">
+                                <form method="POST" action="/admin/inventario/eliminar/{{ p.id }}" onsubmit="return confirm('¿Eliminar producto?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-outline-dark"><i class="bi bi-trash"></i></button>
                                 </form>

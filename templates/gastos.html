@@ -64,11 +64,11 @@
                         <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ g.categoria or 'Sin categoría' }}</span></td>
                         <td class="fw-bold">${{ "{:,.0f}".format(g.monto).replace(',', '.') }}</td>
                         <td>
-                            <div class="d-flex gap-1">
-                                <form method="GET" action="/admin/gastos/editar/{{ g.id }}" style="display:inline">
+                            <div class="d-flex gap-1 align-items-center">
+                                <form method="GET" action="/admin/gastos/editar/{{ g.id }}">
                                     <button type="submit" class="btn btn-outline-dark" title="Editar"><i class="bi bi-pencil"></i></button>
                                 </form>
-                                <form method="POST" action="/admin/gastos/eliminar/{{ g.id }}" style="display:inline" onsubmit="return confirm('¿Eliminar este gasto?')">
+                                <form method="POST" action="/admin/gastos/eliminar/{{ g.id }}" onsubmit="return confirm('¿Eliminar este gasto?')">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-outline-dark"><i class="bi bi-trash"></i></button>
                                 </form>
