@@ -1043,15 +1043,40 @@ def exportar_excel(nombre_archivo, columnas, filas):
 
 
 def exportar_pdf(nombre_archivo, entidad, columnas, filas):
-    from weasyprint import HTML
-    html = render_template('export_pdf.html',
-                           titulo=entidad['nombre'],
-                           columnas=columnas,
-                           filas=filas,
-                           ahora=datetime.now().strftime('%d/%m/%Y %H:%M'))
-    pdf = HTML(string=html).write_pdf()
+    from fpdf import FPDF
+
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    pdf.set_font('Helvetica', 'B', 14)
+    pdf.cell(0, 10, entidad['nombre'], ln=True, align='C')
+    pdf.ln(5)
+
+    n = len(columnas)
+    usable = 277
+    col_w = usable / n if n > 0 else usable
+
+    pdf.set_font('Helvetica', 'B', 9)
+    pdf.set_fill_color(44, 62, 80)
+    pdf.set_text_color(255, 255, 255)
+    for col in columnas:
+        pdf.cell(col_w, 8, col, border=1, fill=True, align='C')
+    pdf.ln()
+
+    pdf.set_text_color(0, 0, 0)
+    for i, fila in enumerate(filas):
+        if i % 2 == 0:
+            pdf.set_fill_color(245, 245, 245)
+        else:
+            pdf.set_fill_color(255, 255, 255)
+        pdf.set_font('Helvetica', '', 8)
+        for val in fila:
+            pdf.cell(col_w, 6, str(val), border=1, fill=True, align='C')
+        pdf.ln()
+
     return Response(
-        pdf,
+        bytes(pdf.output()),
         mimetype='application/pdf',
         headers={'Content-Disposition': f'attachment; filename={nombre_archivo}'},
     )
