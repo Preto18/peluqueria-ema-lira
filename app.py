@@ -407,6 +407,9 @@ def confirmar_turno():
     servicio_nombre = data.get('servicio')
     nombre = data.get('nombre', '').strip()
     telefono = data.get('telefono', '').strip()
+    telefono = telefono.replace(' ', '').replace('-', '').replace('+', '').replace('(', '').replace(')', '')
+    if telefono and not telefono.startswith('54'):
+        telefono = '54' + telefono
     email = data.get('email', '').strip()
     try:
         cantidad_personas = int(data.get('cantidad_personas', 1))

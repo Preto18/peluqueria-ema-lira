@@ -794,6 +794,27 @@ body {
     transform: none;
     box-shadow: none;
 }
+.booking-phone-group {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+}
+.booking-phone-prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 0.7rem;
+    background: var(--color-bg-alt);
+    border: 1.5px solid var(--color-border);
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #555;
+}
+.booking-phone-group .booking-input {
+    border-radius: 0 12px 12px 0;
+    flex: 1;
+}
 .booking-input {
     width: 100%;
     padding: 0.7rem 1rem;
@@ -1490,7 +1511,7 @@ body {
     color: var(--color-muted);
 }
 .booking-field {
-    margin-bottom: 1.1rem;
+    margin-bottom: 1.5rem;
 }
 .booking-field-label {
     font-size: 0.72rem;
