@@ -289,7 +289,6 @@ def horarios_disponibles(fecha_str):
 # --- Autenticaci\u00f3n ---
 
 @app.route('/admin/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
 def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
