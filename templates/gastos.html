@@ -9,7 +9,7 @@
         <form method="POST" action="/admin/gastos/nuevo" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="col-md-4">
-                <label class="form-label">Descripci&oacute;n *</label>
+                <label class="form-label">Descripción *</label>
                 <input type="text" name="descripcion" class="form-control" placeholder="Ej: Compra de shampoo" required>
             </div>
             <div class="col-md-2">
@@ -17,9 +17,9 @@
                 <input type="number" step="0.01" name="monto" class="form-control" required>
             </div>
             <div class="col-md-3">
-                <label class="form-label">Categor&iacute;a</label>
+                <label class="form-label">Categoría</label>
                 <select name="categoria" class="form-select">
-                    <option value="">Sin categor&iacute;a</option>
+                    <option value="">Sin categoría</option>
                     <option value="Insumos">Insumos</option>
                     <option value="Servicios">Servicios</option>
                     <option value="Alquiler">Alquiler</option>
@@ -50,8 +50,8 @@
                 <thead>
                     <tr>
                         <th>Fecha</th>
-                        <th>Descripci&oacute;n</th>
-                        <th class="d-none d-sm-table-cell">Categor&iacute;a</th>
+                        <th>Descripción</th>
+                        <th class="d-none d-sm-table-cell">Categoría</th>
                         <th>Monto</th>
                         <th></th>
                     </tr>
@@ -61,7 +61,7 @@
                     <tr>
                         <td>{{ g.fecha.strftime('%d/%m') }} <span class="d-none d-sm-inline">{{ g.fecha.strftime('%Y %H:%M') }}</span></td>
                         <td class="fw-bold text-truncate" style="max-width:120px">{{ g.descripcion }}</td>
-                        <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ g.categoria or 'Sin categor&iacute;a' }}</span></td>
+                        <td class="d-none d-sm-table-cell"><span class="badge bg-secondary">{{ g.categoria or 'Sin categoría' }}</span></td>
                         <td class="fw-bold">${{ "{:,.0f}".format(g.monto).replace(',', '.') }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
