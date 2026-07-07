@@ -226,6 +226,16 @@ def reset_admin_command():
     print('Admin reseteado: admin / admin123')
 
 
+@app.cli.command('check-users')
+def check_users_command():
+    """Lista usuarios existentes (sin passwords) para diagnostico."""
+    users = User.query.all()
+    if not users:
+        print('No hay usuarios en la DB.')
+    for u in users:
+        print(f'- username: {u.username}')
+
+
 @app.cli.command('seed-services')
 def seed_services_command():
     """Pobla la tabla Service con los 7 servicios base."""
