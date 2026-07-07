@@ -4,7 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate, upgrade
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -1124,7 +1124,8 @@ def exportar_entity(entity):
     rows = entidad['datos']()
     filas = entidad['filas'](rows)
     columnas = entidad['columnas']
-    ahora = datetime.now().strftime('%Y-%m-%d')
+    ar_tz = timezone(timedelta(hours=-3))
+    ahora = datetime.now(ar_tz).strftime('%Y-%m-%d')
     nombre_archivo = f'{entity}-{ahora}.{formato}'
 
     if formato == 'csv':
