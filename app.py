@@ -83,6 +83,7 @@ def ensure_db():
     if not _db_ok:
         try:
             db.create_all()
+            crear_admin_si_no_existe()
             _db_ok = True
         except Exception:
             pass
