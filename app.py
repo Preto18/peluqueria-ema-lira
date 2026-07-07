@@ -54,6 +54,10 @@ def not_found_error(error):
 def internal_error(error):
     app.logger.error(f'500: {error}', exc_info=True)
     db.session.rollback()
+    try:
+        db.create_all()
+    except Exception:
+        pass
     return render_template('errors/500.html', info=INFO), 500
 
 @app.errorhandler(429)
@@ -69,6 +73,26 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Asegura que todas las tablas existan al arrancar (Neon resetea la DB)
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception:
+        pass
+
+_db_ok = False
+
+
+@app.before_request
+def ensure_db():
+    global _db_ok
+    if not _db_ok:
+        try:
+            db.create_all()
+            _db_ok = True
+        except Exception:
+            pass
 
 
 @app.context_processor
