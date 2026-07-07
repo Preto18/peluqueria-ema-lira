@@ -178,6 +178,13 @@ class Service(db.Model):
     duracion = db.Column(db.Integer, default=30)
 
 
+def normalizar_telefono(t):
+    t = t.replace(' ', '').replace('-', '').replace('+', '').replace('(', '').replace(')', '').replace('.', '')
+    if t and not t.startswith('54'):
+        t = '54' + t
+    return t
+
+
 def crear_admin_si_no_existe():
     if not User.query.filter_by(username='admin').first():
         admin = User(username='admin', password_hash=generate_password_hash('admin123'))
@@ -406,10 +413,7 @@ def confirmar_turno():
     hora = data.get('hora')
     servicio_nombre = data.get('servicio')
     nombre = data.get('nombre', '').strip()
-    telefono = data.get('telefono', '').strip()
-    telefono = telefono.replace(' ', '').replace('-', '').replace('+', '').replace('(', '').replace(')', '')
-    if telefono and not telefono.startswith('54'):
-        telefono = '54' + telefono
+    telefono = normalizar_telefono(data.get('telefono', ''))
     email = data.get('email', '').strip()
     try:
         cantidad_personas = int(data.get('cantidad_personas', 1))
@@ -569,7 +573,7 @@ def nuevo_cliente():
             return render_template('cliente_form.html', cliente=request.form)
         cliente = Cliente(
             nombre=nombre,
-            telefono=request.form.get('telefono', ''),
+            telefono=normalizar_telefono(request.form.get('telefono', '')),
             email=request.form.get('email', ''),
             notas=request.form.get('notas', '')
         )
@@ -587,7 +591,7 @@ def editar_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     if request.method == 'POST':
         cliente.nombre = request.form.get('nombre', cliente.nombre).strip()
-        cliente.telefono = request.form.get('telefono', '')
+        cliente.telefono = normalizar_telefono(request.form.get('telefono', ''))
         cliente.email = request.form.get('email', '')
         cliente.notas = request.form.get('notas', '')
         db.session.commit()
