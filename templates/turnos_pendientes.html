@@ -55,6 +55,13 @@
                                     <input type="hidden" name="next" value="{{ request.url }}">
                                     <button type="submit" class="btn btn-outline-dark" title="Rechazar"><i class="bi bi-x-lg"></i></button>
                                 </form>
+                                {% if cita.cliente.telefono %}
+                                <form method="POST" action="/admin/enviar-recordatorio/{{ cita.id }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="next" value="{{ request.url }}">
+                                    <button type="submit" class="btn btn-outline-dark" title="Recordatorio"><i class="bi bi-whatsapp"></i></button>
+                                </form>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

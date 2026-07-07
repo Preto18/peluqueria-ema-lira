@@ -87,6 +87,14 @@
                                     {% if cita.estado != 'cancelada' %}
                                     <li><a class="dropdown-item" href="#" onclick="confirmarCancelar({{ cita.id }}, '{{ cita.cliente.nombre|e }}', '{{ cita.fecha.strftime('%d/%m') }}', '{{ cita.hora }}')"><i class="bi bi-x-lg"></i> Cancelar</a></li>
                                     {% endif %}
+                                    {% if cita.cliente.telefono and cita.estado in ('pendiente', 'aceptada') %}
+                                    <li>
+                                        <form method="POST" action="/admin/enviar-recordatorio/{{ cita.id }}">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="dropdown-item"><i class="bi bi-whatsapp"></i> Recordatorio</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item text-danger" href="#" onclick="eliminarCita({{ cita.id }})"><i class="bi bi-trash"></i> Eliminar</a></li>
                                 </ul>

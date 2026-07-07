@@ -188,10 +188,12 @@ def normalizar_telefono(t):
 
 
 def crear_admin_si_no_existe():
-    if not User.query.filter_by(username='admin').first():
-        admin = User(username='admin', password_hash=generate_password_hash('admin123'))
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(username='admin')
         db.session.add(admin)
-        db.session.commit()
+    admin.password_hash = generate_password_hash('admin123')
+    db.session.commit()
 
 
 @app.cli.command('init-db')
@@ -210,6 +212,18 @@ def init_db_command():
         db.session.commit()
         print('Servicio por defecto creado.')
     print('Base de datos inicializada.')
+
+
+@app.cli.command('reset-admin')
+def reset_admin_command():
+    """Fuerza el usuario admin con password admin123 (crea o resetea)."""
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(username='admin')
+        db.session.add(admin)
+    admin.password_hash = generate_password_hash('admin123')
+    db.session.commit()
+    print('Admin reseteado: admin / admin123')
 
 
 @app.cli.command('seed-services')
@@ -754,6 +768,29 @@ def cambiar_estado_cita(id, estado):
     flash(f'Estado cambiado a {estado}', 'success')
     next_page = request.form.get('next') or request.referrer or url_for('listar_citas')
     return redirect(next_page)
+
+
+from whatsapp_api import enviar_recordatorio
+
+
+@app.route('/admin/enviar-recordatorio/<int:cita_id>', methods=['POST'])
+@login_required
+def enviar_recordatorio_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    telefono = cita.cliente.telefono
+    if not telefono:
+        flash('El cliente no tiene teléfono registrado.', 'warning')
+        return redirect(request.referrer or url_for('listar_citas'))
+    telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+    ok, msg = enviar_recordatorio(
+        telefono=telefono_limpio,
+        nombre_cliente=cita.cliente.nombre,
+        fecha=cita.fecha.strftime('%d/%m'),
+        hora=cita.hora,
+        servicio=cita.servicio,
+    )
+    flash(msg, 'success' if ok else 'danger')
+    return redirect(request.referrer or url_for('listar_citas'))
 
 
 @app.route('/api/turnos-pendientes-count')

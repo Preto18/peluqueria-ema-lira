@@ -79,6 +79,7 @@
                                 <th>Servicio</th>
                                 <th class="d-none d-sm-table-cell">Precio</th>
                                 <th>Estado</th>
+                                <th style="width:40px"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,6 +92,14 @@
                                 <td>
                                     <span class="badge bg-{{ 'dark' if cita.estado == 'completada' else 'secondary' if cita.estado == 'aceptada' else 'secondary' if cita.estado == 'pendiente' else 'light text-muted border' }}">
                                         {{ (cita.estado[:4]|capitalize) if cita.estado != 'completada' else 'OK' }}</span>
+                                </td>
+                                <td>
+                                    {% if cita.cliente.telefono and cita.estado in ('pendiente', 'aceptada') %}
+                                    <form method="POST" action="/admin/enviar-recordatorio/{{ cita.id }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-dark btn-sm" title="Recordatorio"><i class="bi bi-whatsapp"></i></button>
+                                    </form>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
