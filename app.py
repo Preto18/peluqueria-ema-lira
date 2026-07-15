@@ -108,7 +108,7 @@ PROMO = {
 }
 
 INFO = {
-    'direccion': 'Pergamino',
+    'direccion': 'Merced 814, Pergamino',
     'horarios': [
         {'dia': 'Martes', 'horario': '15:00 a 20:00'},
         {'dia': 'Mi\u00e9rcoles a S\u00e1bado', 'horario': '09:00 a 12:00 y 15:00 a 20:00'},
