@@ -256,31 +256,26 @@
     <!-- Footer -->
     <footer class="footer-full">
         <div class="container">
-            <div class="footer-brand">
-                <picture>
-                    <source srcset="{{ url_for('static', filename='img/logo.webp') }}" type="image/webp">
-                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="footer-logo" width="48" height="48">
-                </picture>
-                <span class="footer-brand-text">Ema Lira</span>
-            </div>
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h5><i class="bi bi-geo-alt-fill me-2"></i>Ubicación</h5>
-                    <p>{{ info.direccion }}</p>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <picture>
+                        <source srcset="{{ url_for('static', filename='img/logo.webp') }}" type="image/webp">
+                        <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="footer-logo" width="40" height="40">
+                    </picture>
+                    <span class="footer-brand-text">Ema Lira</span>
                 </div>
-                <div class="footer-col">
-                    <h5><i class="bi bi-clock-fill me-2"></i>Horarios</h5>
-                    <p>Martes: 15 - 20h</p>
-                    <p>Mar a Sáb: 9 - 12 / 15 - 20h</p>
-                </div>
-                <div class="footer-col">
-                    <h5><i class="bi bi-phone-fill me-2"></i>Contacto</h5>
-                    <p><a href="https://wa.me/{{ info.telefono }}" target="_blank" class="footer-link">WhatsApp</a></p>
-                    <p><a href="https://www.instagram.com/emalira.barber/" target="_blank" class="footer-link">Instagram</a></p>
+                <div class="footer-info">
+                    <span><i class="bi bi-geo-alt-fill"></i> {{ info.direccion }}</span>
+                    <span class="footer-divider">|</span>
+                    <span><i class="bi bi-clock-fill"></i> Mar a Sáb: 9 - 12 / 15 - 20h</span>
+                    <span class="footer-divider">|</span>
+                    <a href="https://wa.me/{{ info.telefono }}" target="_blank"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+                    <span class="footer-divider">|</span>
+                    <a href="https://www.instagram.com/emalira.barber/" target="_blank"><i class="bi bi-instagram"></i> Instagram</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Ema Lira — Todos los derechos reservados</p>
+                <p>&copy; 2026 Ema Lira</p>
             </div>
         </div>
     </footer>
