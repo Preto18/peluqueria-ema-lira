@@ -204,11 +204,6 @@
                             <div class="horario-hora">09:00 - 12:00 / 15:00 - 20:00</div>
                         </div>
                     </div>
-                    
-                    <a href="/agendar" class="btn btn-hero mt-4 reveal" style="--reveal-delay: 0.2s">
-                        Agendá tu turno
-                        <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -232,23 +227,14 @@
                             </div>
                         </div>
                         <div class="info-item-dark">
-                            <i class="bi bi-whatsapp"></i>
+                            <i class="bi bi-clock-fill"></i>
                             <div>
-                                <strong>WhatsApp</strong>
-                                <p>2477 592784</p>
-                            </div>
-                        </div>
-                        <div class="info-item-dark">
-                            <i class="bi bi-instagram"></i>
-                            <div>
-                                <strong>Instagram</strong>
-                                <p>@emalira.barber</p>
+                                <strong>Horarios</strong>
+                                <p>Martes: 15 - 20h</p>
+                                <p>Mar a Sáb: 9 - 12 / 15 - 20h</p>
                             </div>
                         </div>
                     </div>
-                    <a href="https://wa.me/{{ info.telefono }}" target="_blank" class="btn btn-hero mt-3">
-                        <i class="bi bi-whatsapp me-2"></i> Escribinos
-                    </a>
                 </div>
                 <div class="col-lg-6 reveal" style="--reveal-delay: 0.15s">
                     <div class="map-container">
@@ -267,7 +253,7 @@
         </div>
     </section>
 
-    <!-- Footer Mejorado -->
+    <!-- Footer -->
     <footer class="footer-full">
         <div class="container">
             <div class="footer-brand">
@@ -280,7 +266,7 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <h5><i class="bi bi-geo-alt-fill me-2"></i>Ubicación</h5>
-                    <p>{{ info.direccion }}</p>
+                    <p>{{ info.direccion }}, Pergamino</p>
                 </div>
                 <div class="footer-col">
                     <h5><i class="bi bi-clock-fill me-2"></i>Horarios</h5>
@@ -289,8 +275,8 @@
                 </div>
                 <div class="footer-col">
                     <h5><i class="bi bi-phone-fill me-2"></i>Contacto</h5>
-                    <p>WhatsApp: 2477 592784</p>
-                    <p>IG: @emalira.barber</p>
+                    <p><a href="https://wa.me/{{ info.telefono }}" target="_blank" class="text-white-50 text-decoration-none">WhatsApp</a></p>
+                    <p><a href="https://www.instagram.com/emalira.barber/" target="_blank" class="text-white-50 text-decoration-none">Instagram</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
