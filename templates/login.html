@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesi&oacute;n &mdash; Ema Lira</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Iniciar Sesion — Ema Lira</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             overflow: hidden;
             position: relative;
-            background: #000;
+            background: #0a0a0a;
         }
         .login-bg {
             position: fixed;
             inset: 0;
-            background: url('{{ url_for('static', filename='img/ema-hero.png') }}') center 30% / cover no-repeat;
-            filter: brightness(0.3) blur(6px) saturate(0.8);
-            transform: scale(1.1);
             z-index: 0;
+        }
+        .login-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            filter: brightness(0.25) blur(8px) saturate(0.7);
+            transform: scale(1.15);
         }
         .login-noise {
             position: fixed;
             inset: 0;
             z-index: 1;
-            opacity: 0.05;
+            opacity: 0.04;
             mix-blend-mode: overlay;
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -40,70 +47,83 @@
         .login-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(160deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+            background: linear-gradient(160deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
             z-index: 1;
         }
         .login-deco {
             position: fixed;
             border-radius: 50%;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.02);
             pointer-events: none;
             z-index: 1;
         }
         .login-deco-1 {
-            width: 400px; height: 400px;
-            top: -120px; right: -100px;
+            width: 500px; height: 500px;
+            top: -180px; right: -150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
         }
         .login-deco-2 {
-            width: 250px; height: 250px;
-            bottom: -60px; left: -60px;
-        }
-        .login-deco-3 {
-            width: 180px; height: 180px;
-            bottom: 30%; left: 5%;
+            width: 300px; height: 300px;
+            bottom: -80px; left: -80px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
         }
         .login-wrap {
             position: relative;
             z-index: 5;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 1.5rem;
-            animation: loginFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: loginFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes loginFadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .login-card {
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 2.5rem 2rem;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
             width: 100%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 25px 80px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .login-logo-wrap {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1rem;
         }
         .login-logo {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.15),
+                0 0 0 4px rgba(0,0,0,0.05);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .login-logo:hover {
+            transform: scale(1.05) rotate(-3deg);
         }
         .login-card .brand {
-            font-family: 'Fraunces', serif;
-            font-weight: 600;
-            font-size: 1.75rem;
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 700;
+            font-size: 2rem;
             color: #000;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.15rem;
+            letter-spacing: -1px;
+            margin-bottom: 0.25rem;
         }
         .login-card .brand-sub {
-            font-size: 0.8rem;
-            color: #999;
-            margin-bottom: 1.75rem;
-            letter-spacing: 0.3px;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
         }
         .input-group-login {
             position: relative;
@@ -111,134 +131,194 @@
         }
         .input-group-login .input-icon {
             position: absolute;
-            left: 1rem;
+            left: 1.1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #adb5bd;
-            font-size: 1rem;
+            color: #bbb;
+            font-size: 1.1rem;
             z-index: 10;
             pointer-events: none;
-            transition: color 0.2s;
+            transition: all 0.25s ease;
         }
         .input-group-login .form-control {
-            border-radius: 12px;
-            border: 1.5px solid #dee2e6;
-            padding: 0.75rem 1rem 0.75rem 2.8rem;
-            font-size: 0.9rem;
+            border-radius: 14px;
+            border: 2px solid #eee;
+            padding: 0.85rem 1rem 0.85rem 3rem;
+            font-size: 0.95rem;
             font-family: 'DM Sans', sans-serif;
+            background: #fafafa;
+            transition: all 0.25s ease;
+        }
+        .input-group-login .form-control:hover {
+            border-color: #ddd;
             background: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s, padding-left 0.2s;
         }
         .input-group-login .form-control:focus {
             border-color: #000;
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
-            padding-left: 2.8rem;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.06);
+            background: #fff;
+            padding-left: 3rem;
         }
         .input-group-login .form-control:focus ~ .input-icon {
             color: #000;
         }
         .input-group-login .form-control::placeholder {
-            color: #ced4da;
-            font-size: 0.85rem;
+            color: #bbb;
+            font-size: 0.9rem;
         }
         .login-card .btn-login {
-            border-radius: 12px;
-            padding: 0.8rem;
-            font-weight: 600;
-            font-size: 0.9rem;
+            border-radius: 14px;
+            padding: 0.95rem;
+            font-weight: 700;
+            font-size: 1rem;
             background: #000;
             color: #fff;
             border: none;
             width: 100%;
+            margin-top: 0.5rem;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            letter-spacing: 0.3px;
         }
         .login-card .btn-login:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            background: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .login-card .btn-login:active {
-            transform: scale(0.98);
+            transform: translateY(0) scale(0.98);
         }
         .login-card .back-link {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            margin-top: 1.25rem;
-            font-size: 0.8rem;
-            color: #adb5bd;
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #aaa;
             text-decoration: none;
-            transition: color 0.2s, gap 0.2s;
+            font-weight: 500;
+            transition: all 0.25s ease;
         }
         .login-card .back-link:hover {
             color: #000;
-            gap: 0.55rem;
+            gap: 0.6rem;
         }
         .login-card .alert {
-            border-radius: 12px;
-            font-size: 0.78rem;
-            padding: 0.6rem 1rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
             margin-bottom: 1.25rem;
+            border: none;
+        }
+        .login-card .alert-danger {
+            background: #fff5f5;
+            color: #c00;
+        }
+        .login-card .alert-success {
+            background: #f0fff4;
+            color: #0a0;
         }
         .login-card .alert .btn-close {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            opacity: 0.5;
         }
-        @media (max-width: 480px) {
-            .login-deco { display: none; }
-            .login-card { padding: 1.5rem 1rem; }
-            .login-wrap { padding: 1rem; }
-            .login-card .brand { font-size: 1.4rem; }
-            .input-group-login .form-control { padding: 0.6rem 1rem 0.6rem 2.5rem; font-size: 0.85rem; }
-        }
-        @media (max-height: 600px) {
-            .login-deco { display: none; }
-            .login-card { padding: 1.25rem 1rem; }
-            .login-logo { width: 44px; height: 44px; }
-            .login-card .brand { font-size: 1.35rem; }
-            .login-card .brand-sub { margin-bottom: 1rem; }
-            .input-group-login { margin-bottom: 0.6rem; }
+        .login-card .alert .btn-close:hover {
+            opacity: 1;
         }
         .login-divider {
             height: 1px;
-            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
-            margin: 1.25rem 0;
+            background: linear-gradient(to right, transparent, #e8e8e8, transparent);
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 480px) {
+            .login-deco { display: none; }
+            .login-card { padding: 2rem 1.5rem; border-radius: 24px; }
+            .login-wrap { padding: 1rem; }
+            .login-card .brand { font-size: 1.6rem; }
+            .login-logo { width: 60px; height: 60px; }
+            .login-logo-wrap { width: 60px; height: 60px; }
+            .input-group-login .form-control { padding: 0.75rem 1rem 0.75rem 2.8rem; font-size: 0.9rem; }
+            .input-group-login .input-icon { left: 1rem; }
+        }
+        @media (max-height: 700px) {
+            .login-card { padding: 2rem 1.5rem; }
+            .login-logo { width: 56px; height: 56px; }
+            .login-logo-wrap { width: 56px; height: 56px; margin-bottom: 0.75rem; }
+            .login-card .brand { font-size: 1.5rem; }
+            .login-card .brand-sub { margin-bottom: 1.25rem; }
+            .input-group-login { margin-bottom: 0.75rem; }
+            .input-group-login .form-control { padding: 0.7rem 1rem 0.7rem 2.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="login-bg"></div>
+    <div class="login-bg">
+        <picture>
+            <source srcset="{{ url_for('static', filename='img/ema-hero.webp') }}" type="image/webp">
+            <img src="{{ url_for('static', filename='img/ema-hero.png') }}" 
+                 alt="" 
+                 width="1920" 
+                 height="1080"
+                 loading="eager"
+                 decoding="async"
+                 fetchpriority="high">
+        </picture>
+    </div>
     <div class="login-noise"></div>
     <div class="login-overlay"></div>
     <div class="login-deco login-deco-1"></div>
     <div class="login-deco login-deco-2"></div>
-    <div class="login-deco login-deco-3"></div>
 
     <div class="login-wrap">
         <div class="login-card">
-            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="login-logo" width="60" height="60">
+            <div class="login-logo-wrap">
+                <picture>
+                    <source srcset="{{ url_for('static', filename='img/logo.webp') }}" type="image/webp">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" 
+                         alt="Ema Lira" 
+                         class="login-logo" 
+                         width="72" 
+                         height="72"
+                         loading="eager"
+                         decoding="async">
+                </picture>
+            </div>
             <div class="brand">Ema Lira</div>
             <div class="brand-sub">Panel administrativo</div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show py-2 small">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
 
-            <form method="POST">
+            <form method="POST" autocomplete="on">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="input-group-login">
-                    <input type="text" name="username" class="form-control" placeholder="Ingres&aacute; tu usuario" required>
+                    <input type="text" 
+                           name="username" 
+                           class="form-control" 
+                           placeholder="Usuario" 
+                           required
+                           autocomplete="username"
+                           autofocus>
                     <i class="bi bi-person input-icon"></i>
                 </div>
                 <div class="input-group-login">
-                    <input type="password" name="password" class="form-control" placeholder="Contrase&ntilde;a" required>
+                    <input type="password" 
+                           name="password" 
+                           class="form-control" 
+                           placeholder="Contrasena" 
+                           required
+                           autocomplete="current-password">
                     <i class="bi bi-lock input-icon"></i>
                 </div>
                 <button type="submit" class="btn-login">
@@ -248,8 +328,12 @@
 
             <div class="login-divider"></div>
 
-            <a href="/" class="back-link"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
+            <a href="/" class="back-link">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+            </a>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -3,13 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ema Lira — Barbería Profesional</title>
+    
+    <!-- SEO Básico -->
+    <title>Ema Lira — Barbería Profesional en Merced 814 | Turnos Online</title>
+    <meta name="description" content="Ema Lira - Barbería profesional en Merced 814. Agendá tu turno online, cortes, barba, tintes y más. Horarios: Mar-Vie 9-12 y 15-20h. WhatsApp: 2477592784">
+    <meta name="keywords" content="barbería, peluquería, corte de cabello, barba, turnos, Merced 814, Ema Lira">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://emalira.com/">
+    
+    <!-- Open Graph (WhatsApp / Instagram / Facebook) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ema Lira — Barbería Profesional">
+    <meta property="og:description" content="Agendá tu turno online en Ema Lira. Cortes, barba, tintes y más en Merced 814.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/logo.jpg', _external=True) }}">
+    <meta property="og:url" content="https://emalira.com/">
+    <meta property="og:site_name" content="Ema Lira">
+    <meta property="og:locale" content="es_AR">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ema Lira — Barbería Profesional">
+    <meta name="twitter:description" content="Agendá tu turno online en Ema Lira. Cortes, barba, tintes y más.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/logo.jpg', _external=True) }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='img/logo.jpg') }}">
+    
+    <!-- CSS Optimizado -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Fuentes Optimizada (carga asíncrona) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Fraunces:opsz,wght,SOFT@9..144,700;9..144,800;9..144,900,0;9..144,900,50&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Fraunces:opsz,wght,SOFT@9..144,700;9..144,800;9..144,900,0;9..144,900,50&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Fraunces:opsz,wght,SOFT@9..144,700;9..144,800;9..144,900,0;9..144,900,50&display=swap"></noscript>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Schema.org LocalBusiness -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BarberShop",
+        "name": "Ema Lira",
+        "image": "{{ url_for('static', filename='img/logo.jpg', _external=True) }}",
+        "description": "Barbería profesional en Merced 814. Cortes, barba, tintes y más.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Merced 814",
+            "addressLocality": "Buenos Aires",
+            "addressRegion": "Buenos Aires",
+            "addressCountry": "AR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -34.6036844,
+            "longitude": -58.3815591
+        },
+        "telephone": "+5492477592784",
+        "url": "https://emalira.com",
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Tuesday"],
+                "opens": "15:00",
+                "closes": "20:00"
+            },
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "09:00",
+                "closes": "12:00"
+            },
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "15:00",
+                "closes": "20:00"
+            }
+        ],
+        "priceRange": "$$",
+        "sameAs": [
+            "https://www.instagram.com/emalira.barber/"
+        ]
+    }
+    </script>
+    
     <style>
         .brand-logo { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
         .brand-text { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1.2rem; color: #fff; }
@@ -21,7 +101,16 @@
     <nav class="navbar navbar-public" id="mainNav">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Ema Lira" class="brand-logo" width="36" height="36">
+                <picture>
+                    <source srcset="{{ url_for('static', filename='img/logo.webp') }}" type="image/webp">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" 
+                         alt="Ema Lira - Barbería Profesional" 
+                         class="brand-logo" 
+                         width="36" 
+                         height="36"
+                         loading="eager"
+                         decoding="async">
+                </picture>
                 <span class="brand-text">Ema Lira</span>
             </a>
             <div class="d-flex align-items-center gap-1">
@@ -36,7 +125,19 @@
     </nav>
 
     <section class="hero" id="hero">
-        <div class="hero-bg"></div>
+        <!-- Imagen hero optimizada con WebP fallback -->
+        <picture>
+            <source srcset="{{ url_for('static', filename='img/ema-hero.webp') }}" type="image/webp">
+            <source srcset="{{ url_for('static', filename='img/ema-hero.png') }}" type="image/png">
+            <img src="{{ url_for('static', filename='img/ema-hero.png') }}" 
+                 alt="Ema Lira - Interior de la barbería profesional"
+                 class="hero-bg"
+                 width="1920" 
+                 height="1080"
+                 loading="eager"
+                 decoding="async"
+                 fetchpriority="high">
+        </picture>
         <div class="hero-noise"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
